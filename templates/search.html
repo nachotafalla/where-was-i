@@ -2,4 +2,8 @@
 
 {% block body %}
 <h1>Search</h1>
+<form action="/search" method="get">
+    <input name="query" type="text" placeholder="Show/Movie" autofocus>
+    <button type="submit">Search</button>
+</form>
 {% endblock %}
