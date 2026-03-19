@@ -6,4 +6,34 @@
     <input name="query" type="text" placeholder="Show/Movie" autofocus>
     <button type="submit">Search</button>
 </form>
+<form action="/details" method="get">
+<table>
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Summary</th>
+            <th>Last Ep</th>
+            <th>See More</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for result in results %}
+        <tr>
+            <td>
+                <img src="{{ result.show.image.medium }}" alt="{{ result.show.name }}">
+            </td>
+            <td> {{result.show.name}} </td>
+            <td> {{result.show.summary}} </td>
+            <td> {{ result.show.previousepisode.name if result.show.previousepisode else 'No previous episode' }} </td>
+            <td>
+                <input name="id" type="hidden" value="{{result.show.id}}"> 
+                <button type="submit"> More details </button>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</form>
+    
 {% endblock %}
