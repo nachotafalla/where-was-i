@@ -16,7 +16,18 @@ def search():
     
 @app.route("/details", methods=["GET"])
 def details():
-    return render_template("details.html")
+    show_id = request.args.get("id")
+    response = requests.get(f"https://api.tvmaze.com/shows/{show_id}")
+    data = response.json()
+    return render_template("details.html",results = data)
+
+@app.route("/library", methods=["GET"])
+def library():
+    return render_template("library.html")
+
+@app.route("/updates", methods=["GET"])
+def library():
+    return render_template("library.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
