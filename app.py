@@ -16,7 +16,7 @@ def search():
     
 @app.route("/details", methods=["GET"])
 def details():
-
+    return render_template("details.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
