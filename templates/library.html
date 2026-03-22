@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+
+{% block title%} Library {% endblock %}
+{% block body %}
+<h1>Library</h1>
+<p>Welcome to your library</p>
+<table>
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Your progress</th>
+            <th>Latest Update</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in rows %}
+        <tr>
+            <!-- Image -->
+            <td>
+                <img src="{{ row[3] }}" alt="{{ row[2] }}">
+            </td>
+            <!-- Name -->
+            <td> {{ row[2] }} </td>
+            <!-- Status -->
+            <td> {{ row[4] }} </td>
+            <!-- Your progress -->
+            <td> TODO </td>
+            <!-- Latest Update -->
+            <td> TODO </td>
+            <!-- Action -->
+            <td>
+                <form action="/details" method="get">
+                    <input name="id" type="hidden" value="{{ row[1] }}">
+                    <button type="submit">See More</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
