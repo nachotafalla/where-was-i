@@ -1,7 +1,24 @@
 from flask import Flask, render_template, request
 import requests
+import sqlite3
 
 app = Flask(__name__)
+#### DATABASE
+conn = sqlite3.connect("app.db")
+cur = conn.cursor()
+cur.execute("""
+CREATE TABLE IF NOT EXISTS library (id INTEGER PRIMARY KEY AUTOINCREMENT,
+tvmaze_id INTEGER NOT NULL UNIQUE,
+name TEXT NOT NULL,
+image_url TEXT,
+status TEXT,
+premiered TEXT
+)
+""")
+conn.commit()
+
+###################
+
 
 @app.route("/")
 def index():
@@ -23,11 +40,14 @@ def details():
 
 @app.route("/library", methods=["GET"])
 def library():
-    return render_template("library.html")
+    rows = cur.execute("""SELECT * FROM library""").fetchall()
+    return render_template("library.html",rows = rows)
 
 @app.route("/updates", methods=["GET"])
 def updates():
-    return render_template("library.html")
+    return render_template("updates.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+conn.close()
