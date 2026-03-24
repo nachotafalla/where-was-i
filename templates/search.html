@@ -11,9 +11,10 @@
   <img src="{{ result.show.image.medium }}" alt="{{ result.show.name }}">
   <div class="card-body">
     <h5 class="card-title"> {{result.show.name}} </h5>
-    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+    <p class="card-text">{{result.show.summary}}.</p>
     <a href="#" class="btn btn-primary">See More</a>
   </div>
 </div>
+{% endfor %}
     
 {% endblock %}
