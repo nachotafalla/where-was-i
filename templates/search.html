@@ -11,8 +11,8 @@
   <img src="{{ result.show.image.medium }}" alt="{{ result.show.name }}">
   <div class="card-body">
     <h5 class="card-title"> {{result.show.name}} </h5>
-    <p class="card-text">{{result.show.summary}}.</p>
-    <a href="#" class="btn btn-primary">See More</a>
+    <p class="card-text">{{result.show.rating.average}}.</p>
+    <a href="/details?id={{result.show.id}}" class="btn btn-primary">See More</a>
   </div>
 </div>
 {% endfor %}
