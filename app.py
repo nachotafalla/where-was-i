@@ -46,7 +46,10 @@ def updates():
 
 @app.route("/save", methods=["GET"])
 def save():
-    save = request.args.get("save")
+    save = request.args.get("id")
+    conn = sqlite3.connect("app.db")
+    cur = conn.cursor()
+    cur.execute("""INSERT INTO users)
 
 if __name__ == "__main__":
     app.run(debug=True)
