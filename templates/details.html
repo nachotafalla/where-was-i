@@ -3,4 +3,8 @@
 {% block title %} Page {% endblock %}
 {% block body %}
 <h1> {{show.name}} </h1>
+<form action="/search" method="get">
+    <input name="id" hidden type="text" value="{{show.id}}">
+    <button type="submit">Add to Library</button>
+</form>
 {% endblock %}

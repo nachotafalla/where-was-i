@@ -44,5 +44,9 @@ def library():
 def updates():
     return render_template("updates.html")
 
+@app.route("/save", methods=["GET"])
+def save():
+    save = request.args.get("save")
+
 if __name__ == "__main__":
     app.run(debug=True)
