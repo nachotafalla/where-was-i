@@ -25,8 +25,7 @@ def search():
     
 @app.route("/details", methods=["GET"])
 def details():
-    conn = sqlite3.connect("app.db")
-    cur = conn.cursor()
+    conn, cur = helpers.get_db()
     ##################
     show_id = request.args.get("id")
     response = requests.get(f"https://api.tvmaze.com/shows/{show_id}")
@@ -42,8 +41,7 @@ def details():
 @app.route("/library", methods=["GET"])
 def library():
     #############DB CURSOR#############
-    conn = sqlite3.connect("app.db")
-    cur = conn.cursor()
+    conn, cur = helpers.get_db()
     rows = cur.execute("SELECT * FROM library").fetchall()
     conn.close()
     #############
@@ -55,8 +53,7 @@ def updates():
 
 @app.route("/save", methods=["POST"])
 def save():
-    conn = sqlite3.connect("app.db")
-    cur = conn.cursor()
+    conn, cur = helpers.get_db()
     #########
     tvmaze = request.form.get("id")
     name = request.form.get("name")

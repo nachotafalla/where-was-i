@@ -20,3 +20,8 @@ def imagefb(image):
         return image["medium"]
     else:
         return ""
+
+def get_db():
+    conn = sqlite3.connect("app.db")
+    cur = conn.cursor()
+    return conn, cur
