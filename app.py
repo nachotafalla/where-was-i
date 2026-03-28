@@ -25,17 +25,26 @@ def search():
     
 @app.route("/details", methods=["GET"])
 def details():
+    conn = sqlite3.connect("app.db")
+    cur = conn.cursor()
+    ##################
     show_id = request.args.get("id")
     response = requests.get(f"https://api.tvmaze.com/shows/{show_id}")
     data = response.json()
-    return render_template("details.html",show = data)
+    #######################
+    rows = cur.execute("SELECT * FROM library WHERE tvmaze_id = ?", (show_id,)).fetchall()
+    conn.close()
+    ######################
+    saved = bool(rows)
+    #######################
+    return render_template("details.html",show = data,saved = saved)
 
 @app.route("/library", methods=["GET"])
 def library():
     #############DB CURSOR#############
     conn = sqlite3.connect("app.db")
     cur = conn.cursor()
-    rows = cur.execute("""SELECT * FROM library""").fetchall()
+    rows = cur.execute("SELECT * FROM library").fetchall()
     conn.close()
     #############
     return render_template("library.html",rows = rows)
@@ -44,12 +53,26 @@ def library():
 def updates():
     return render_template("updates.html")
 
-@app.route("/save", methods=["GET"])
+@app.route("/save", methods=["POST"])
 def save():
-    save = request.args.get("id")
     conn = sqlite3.connect("app.db")
     cur = conn.cursor()
-    cur.execute("""INSERT INTO users)
+    #########
+    tvmaze = request.args.get("id")
+    name = request.args.get("name")
+    image = request.args.get("image")
+    status = request.args.get("status")
+    premiered = request.args.get("premiered")
+    cur.execute("INSERT INTO library (tvmaze_id,name,image_url,status,premiered) VALUES (?,?,?,?,?)",(tvmaze,name,image,status,premiered))
+    conn.commit()
+    conn.close()
+    ###########
+    show_id = request.args.get("id")
+    response = requests.get(f"https://api.tvmaze.com/shows/{show_id}")
+    data = response.json()
+    ###########
+    return render_template("details.html",show = data, saved = True)
+    
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -3,8 +3,17 @@
 {% block title %} Page {% endblock %}
 {% block body %}
 <h1> {{show.name}} </h1>
-<form action="/search" method="get">
-    <input name="id" hidden type="text" value="{{show.id}}">
+
+{% if saved %}
+    <p>Already in Library</p>
+{% else %}
+<form action="/save" method="get">
+    <input name="id" type="hidden" value="{{show.id}}">
+    <input name="name" type="hidden" value="{{show.name}}">
+    <input name="image" type="hidden" value="{{show.image.medium}}">
+    <input name="status" type="hidden" value="{{show.status}}">
+    <input name="premiered" type="hidden" value="{{show.premiered}}">
     <button type="submit">Add to Library</button>
 </form>
+{% endif %}
 {% endblock %}
