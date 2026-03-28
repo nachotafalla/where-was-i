@@ -14,3 +14,9 @@ def startdb():
     """)
     conn.commit()
     conn.close()
+
+def imagefb(image):
+    if image:
+        return image["medium"]
+    else:
+        return ""

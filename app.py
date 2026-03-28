@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 import requests
 import sqlite3
 import helpers
@@ -58,20 +58,19 @@ def save():
     conn = sqlite3.connect("app.db")
     cur = conn.cursor()
     #########
-    tvmaze = request.args.get("id")
-    name = request.args.get("name")
-    image = request.args.get("image")
-    status = request.args.get("status")
-    premiered = request.args.get("premiered")
+    tvmaze = request.form.get("id")
+    name = request.form.get("name")
+    image = request.form.get("image")
+    status = request.form.get("status")
+    premiered = request.form.get("premiered")
     cur.execute("INSERT INTO library (tvmaze_id,name,image_url,status,premiered) VALUES (?,?,?,?,?)",(tvmaze,name,image,status,premiered))
     conn.commit()
     conn.close()
     ###########
-    show_id = request.args.get("id")
-    response = requests.get(f"https://api.tvmaze.com/shows/{show_id}")
+    response = requests.get(f"https://api.tvmaze.com/shows/{tvmaze}")
     data = response.json()
     ###########
-    return render_template("details.html",show = data, saved = True)
+    return redirect(url_for("details",id=tvmaze,saved=True))
     
 
 if __name__ == "__main__":
