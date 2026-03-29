@@ -25,3 +25,7 @@ def get_db():
     conn = sqlite3.connect("app.db")
     cur = conn.cursor()
     return conn, cur
+
+def close_db(conn):
+    conn.commit()
+    conn.close()

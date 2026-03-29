@@ -67,7 +67,17 @@ def save():
     response = requests.get(f"https://api.tvmaze.com/shows/{tvmaze}")
     data = response.json()
     ###########
-    return redirect(url_for("details",id=tvmaze,saved=True))
+    return redirect(url_for("details",id=tvmaze))
+
+@app.route("/remove",methods=["POST"])
+def remove():
+    conn, cur = helpers.get_db()
+    remove = request.form.get("remove")
+    cur.execute("DELETE FROM library WHERE tvmaze_id = ?", (remove, ))
+    helpers.close_db(conn)
+    return redirect(url_for("library"))
+    ##########
+
     
 
 if __name__ == "__main__":

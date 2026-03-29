@@ -13,6 +13,7 @@
             <th>Your progress</th>
             <th>Latest Update</th>
             <th>Action</th>
+            <th>Remove</th>
         </tr>
     </thead>
     <tbody>
@@ -35,6 +36,12 @@
                 <form action="/details" method="get">
                     <input name="id" type="hidden" value="{{ row[1] }}">
                     <button type="submit">See More</button>
+                </form>
+            </td>
+            <td>
+                <form action="/remove" method="post">
+                    <input name="remove" type="hidden" value="{{ row[1] }}">
+                    <button type="submit">Remove</button>
                 </form>
             </td>
         </tr>
