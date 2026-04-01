@@ -27,8 +27,14 @@
             <td> {{ row[2] }} </td>
             <!-- Status -->
             <td> {{ row[4] }} </td>
-            <!-- Your progress -->
-            <td> TODO </td>
+            <!-- Your Progress -->
+            <td>
+                {% if row[6] and row[7] %}
+                    Season {{ row[6] }} Episode {{ row[7] }}
+                {% else %}
+                    Not Started
+                {% endif %}
+            </td>
             <!-- Latest Update -->
             <td> TODO </td>
             <!-- Action -->

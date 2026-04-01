@@ -1,5 +1,8 @@
 import sqlite3
 
+
+
+
 def startdb():
     conn = sqlite3.connect("app.db")
     cur = conn.cursor()
@@ -9,7 +12,9 @@ def startdb():
     name TEXT NOT NULL,
     image_url TEXT,
     status TEXT,
-    premiered TEXT
+    premiered TEXT,
+    season INTEGER,
+    episode INTEGER
     )
     """)
     conn.commit()

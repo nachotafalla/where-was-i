@@ -47,7 +47,7 @@ def library():
     #############
     return render_template("library.html",rows = rows)
 
-@app.route("/updates", methods=["GET"])
+@app.route("/progress", methods=["GET"])
 def updates():
     return render_template("updates.html")
 
