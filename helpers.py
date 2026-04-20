@@ -1,4 +1,5 @@
 import sqlite3
+import requests
 
 
 
@@ -34,3 +35,27 @@ def get_db():
 def close_db(conn):
     conn.commit()
     conn.close()
+
+def next_ep(tvmaze_id,season,episode):
+    response = requests.get(f"https://api.tvmaze.com/shows/{tvmaze_id}/episodes")
+    episodes = response.json()
+    if season== 0 and episode== 0:
+        return (tvmaze_id,episodes[0]["season"],episodes[0]["number"])
+    for i, ep in enumerate(episodes): 
+        if ep["season"] == season and ep["number"] == episode:
+            if i+1 >= len(episodes):
+                return (tvmaze_id,season,episode)  
+            next_episode = episodes[i+1]
+            return (tvmaze_id,next_episode["season"],next_episode["number"])
+
+def prev_ep(tvmaze_id,season,episode):
+    response = requests.get(f"https://api.tvmaze.com/shows/{tvmaze_id}/episodes")
+    episodes = response.json()
+    if season== 0 and episode== 0:
+        return (tvmaze_id,season,episode)
+    for i, ep in enumerate(episodes): 
+        if ep["season"] == season and ep["number"] == episode:
+            if i-1 < 0 :
+                return (tvmaze_id,season,episode)  
+            next_episode = episodes[i-1]
+            return (tvmaze_id,next_episode["season"],next_episode["number"])

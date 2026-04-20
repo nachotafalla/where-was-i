@@ -47,9 +47,26 @@ def library():
     #############
     return render_template("library.html",rows = rows)
 
-@app.route("/progress", methods=["GET"])
-def updates():
-    return render_template("updates.html")
+@app.route("/progress", methods=["POST"])
+def progress():
+    conn, cur = helpers.get_db()
+    ##########
+    tvmaze_id = request.form.get("id")
+    action = request.form.get("action")
+    season = request.form.get("season")
+    episode = request.form.get("episode")
+    #########
+    season = int(season)
+    episode = int(episode)
+    #########
+    if action == "increase":
+        tvmaze_id,season,episode = helpers.next_ep(tvmaze_id,season,episode)
+        cur.execute("UPDATE library SET episode = ?, season = ? WHERE tvmaze_id = ?",(episode,season,tvmaze_id))
+    elif action == "decrease":
+        tvmaze_id,season,episode = helpers.prev_ep(tvmaze_id,season,episode)
+        cur.execute("UPDATE library SET episode = ?, season = ? WHERE tvmaze_id = ?",(episode,season,tvmaze_id))
+    helpers.close_db(conn)
+    return redirect(url_for("library"))
 
 @app.route("/save", methods=["POST"])
 def save():
@@ -63,9 +80,6 @@ def save():
     cur.execute("INSERT INTO library (tvmaze_id,name,image_url,status,premiered) VALUES (?,?,?,?,?)",(tvmaze,name,image,status,premiered))
     conn.commit()
     conn.close()
-    ###########
-    response = requests.get(f"https://api.tvmaze.com/shows/{tvmaze}")
-    data = response.json()
     ###########
     return redirect(url_for("details",id=tvmaze))
 
