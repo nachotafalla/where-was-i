@@ -47,6 +47,7 @@ def next_ep(tvmaze_id,season,episode):
                 return (tvmaze_id,season,episode)  
             next_episode = episodes[i+1]
             return (tvmaze_id,next_episode["season"],next_episode["number"])
+    return (tvmaze_id,season,episode)
 
 def prev_ep(tvmaze_id,season,episode):
     response = requests.get(f"https://api.tvmaze.com/shows/{tvmaze_id}/episodes")
@@ -59,3 +60,4 @@ def prev_ep(tvmaze_id,season,episode):
                 return (tvmaze_id,season,episode)  
             next_episode = episodes[i-1]
             return (tvmaze_id,next_episode["season"],next_episode["number"])
+    return (tvmaze_id,season,episode)

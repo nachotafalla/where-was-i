@@ -78,8 +78,7 @@ def save():
     status = request.form.get("status")
     premiered = request.form.get("premiered")
     cur.execute("INSERT INTO library (tvmaze_id,name,image_url,status,premiered) VALUES (?,?,?,?,?)",(tvmaze,name,image,status,premiered))
-    conn.commit()
-    conn.close()
+    helpers.close_db(conn)
     ###########
     return redirect(url_for("details",id=tvmaze))
 
