@@ -36,11 +36,18 @@
                     <input name = "episode" value=" {{ row[7]}}" type="hidden">
                     <button type="submit" class="btn btn-primary btn-sm">-1 Episode</button>
                 </form>
-                {% if row[6] and row[7] %}
+                <button type="button" class="button" onclick="togglePopup(this)">
+                    {% if row[6] and row[7] %}
                     Season {{ row[6] }} Episode {{ row[7] }}
-                {% else %}
+                    {% else %}
                     Not Started
-                {% endif %}
+                    {% endif %}
+                </button>
+                <div class="popup">
+                    <form action = "/progress" method="post">
+                        <input name = "tvmaze_id" value = "{{row [1]}}" type="hidden">
+                    </form>
+                </div>
                 <form action = "/progress" method = "post">
                     <input name = "tvmaze_id" value="{{ row[1] }}" type="hidden">
                     <input name = "action" value="increase" type="hidden">
@@ -48,8 +55,6 @@
                     <input name = "episode" value=" {{ row[7]}}" type="hidden">
                     <button type="submit" class="btn btn-primary btn-sm">+1 Episode</button>
                 </form>
-                <button> S1E4 </button>
-                <div class="popup"> ...manual form... </div>
             </td>
             <!-- Latest Update -->
             <td> TODO </td>

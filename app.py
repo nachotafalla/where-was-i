@@ -58,6 +58,7 @@ def progress():
     #########
     season = int(season)
     episode = int(episode)
+    
     #########
     if action == "increase":
         tvmaze_id,season,episode = helpers.next_ep(tvmaze_id,season,episode)
