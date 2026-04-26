@@ -29,13 +29,15 @@
             <td> {{ row[4] }} </td>
             <!-- Your Progress -->
             <td>
+                <!-- Back Pill -->
                 <form action = "/progress" method = "post">
-                    <input name = "tvmaze_id" value="{{ row[1] }}" type="hidden">
+                    <input name = "id" value="{{ row[1] }}" type="hidden">
                     <input name = "action" value="decrease" type="hidden">
                     <input name = "season" value=" {{ row[6]}}" type="hidden">
                     <input name = "episode" value=" {{ row[7]}}" type="hidden">
                     <button type="submit" class="btn btn-primary btn-sm">-1 Episode</button>
                 </form>
+                <!-- Button -->
                 <button type="button" class="button" onclick="togglePopup(this)">
                     {% if row[6] and row[7] %}
                     Season {{ row[6] }} Episode {{ row[7] }}
@@ -45,11 +47,13 @@
                 </button>
                 <div class="popup">
                     <form action = "/progress" method="post">
-                        <input name = "tvmaze_id" value = "{{row [1]}}" type="hidden">
+                        <input name = "id" value = "{{row[1]}}" type="hidden">
+                        
                     </form>
                 </div>
+                <!-- Forward Pill -->
                 <form action = "/progress" method = "post">
-                    <input name = "tvmaze_id" value="{{ row[1] }}" type="hidden">
+                    <input name = "id" value="{{ row[1] }}" type="hidden">
                     <input name = "action" value="increase" type="hidden">
                     <input name = "season" value=" {{ row[6]}}" type="hidden">
                     <input name = "episode" value=" {{ row[7]}}" type="hidden">
