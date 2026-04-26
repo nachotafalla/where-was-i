@@ -61,3 +61,12 @@ def prev_ep(tvmaze_id,season,episode):
             next_episode = episodes[i-1]
             return (tvmaze_id,next_episode["season"],next_episode["number"])
     return (tvmaze_id,season,episode)
+
+def max_season(tvmaze_id,season,episode):
+    response = requests.get(f"https://api.tvmaze.com/shows/{tvmaze_id}/episodes")
+    episodes = response.json()
+    max_season = 0
+    for i,ep in enumerate(episodes):
+        if ep["season"] > max_season:
+            max_season = ep["season"]
+    return max_season
