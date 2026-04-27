@@ -48,7 +48,17 @@
                 <div class="popup">
                     <form action = "/progress" method="post">
                         <input name = "id" value = "{{row[1]}}" type="hidden">
-                        
+                        <select name="season">
+                            {% for season in range(1, max_data[row[1]]["max_season"+1] )%}
+                                <option value="{{ season }}"> Season {{ season }} </option>
+                            {% endfor %}
+                        </select>
+                        <select name = "episode">
+                            {% for episode in range(1, max_data[row[1]]["max_episode"+1]) %}
+                                <option value="{{ episode }}"> episode {{ episode }} </option>
+                            {% endfor %}
+                        </select>
+                        <input name = "action" value = "set" type="">
                     </form>
                 </div>
                 <!-- Forward Pill -->

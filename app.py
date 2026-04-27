@@ -45,7 +45,17 @@ def library():
     rows = cur.execute("SELECT * FROM library").fetchall()
     conn.close()
     #############
-    return render_template("library.html",rows = rows)
+    max_data = {}
+    for row in rows:
+        tvmaze_id = row[1]
+        max_season = helpers.max_season(tvmaze_id)
+        max_episode = helpers.max_episode(tvmaze_id, max_season)
+        max_data[tvmaze_id] = {
+            "max_season": max_season,
+            "max_episode": max_episode
+        }
+    #############
+    return render_template("library.html",rows = rows, max_data = max_data)
 
 @app.route("/progress", methods=["POST"])
 def progress():
@@ -56,8 +66,12 @@ def progress():
     season = request.form.get("season")
     episode = request.form.get("episode")
     #########
-    season = int(season)
-    episode = int(episode)
+    if not season or not episode:
+        season = 0
+        episode = 0
+    else:
+        season = int(season)
+        episode = int(episode)
     
     #########
     if action == "increase":
@@ -66,6 +80,8 @@ def progress():
     elif action == "decrease":
         tvmaze_id,season,episode = helpers.prev_ep(tvmaze_id,season,episode)
         cur.execute("UPDATE library SET episode = ?, season = ? WHERE tvmaze_id = ?",(episode,season,tvmaze_id))
+    elif action == "set":
+
     helpers.close_db(conn)
     return redirect(url_for("library"))
 
