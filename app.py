@@ -50,10 +50,14 @@ def library():
         tvmaze_id = row[1]
         max_season = helpers.max_season(tvmaze_id)
         max_episode = helpers.max_episode(tvmaze_id, max_season)
+        episodes_by_season = {}
         max_data[tvmaze_id] = {
             "max_season": max_season,
             "max_episode": max_episode
         }
+        for season in range(1, max_season + 1):
+            episodes_by_season[season] = helpers.max_episode(tvmaze_id,season)
+        max_data[tvmaze_id]["episodes_by_season"] = episodes_by_season
     #############
     return render_template("library.html",rows = rows, max_data = max_data)
 
@@ -81,7 +85,7 @@ def progress():
         tvmaze_id,season,episode = helpers.prev_ep(tvmaze_id,season,episode)
         cur.execute("UPDATE library SET episode = ?, season = ? WHERE tvmaze_id = ?",(episode,season,tvmaze_id))
     elif action == "set":
-
+        cur.execute("UPDATE library SET episode=?, season=? WHERE tvmaze_id=?",(episode,season,tvmaze_id))
     helpers.close_db(conn)
     return redirect(url_for("library"))
 

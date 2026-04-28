@@ -48,17 +48,19 @@
                 <div class="popup">
                     <form action = "/progress" method="post">
                         <input name = "id" value = "{{row[1]}}" type="hidden">
-                        <select name="season">
-                            {% for season in range(1, max_data[row[1]]["max_season"+1] )%}
-                                <option value="{{ season }}"> Season {{ season }} </option>
+                        {% set selected_season = row[6] or 1 %}
+                        <select name="season" onchange="updateEpisodes(this)" data-episodes='{{max_data[row[1]]["episodes_by_season"] | tojson }}'>
+                            {% for season in range(1, max_data[row[1]]["max_season"] + 1 )%}
+                                <option value="{{ season }}" {% if season == selected_season %}selected{% endif %}> Season {{ season }} </option>
                             {% endfor %}
                         </select>
-                        <select name = "episode">
-                            {% for episode in range(1, max_data[row[1]]["max_episode"+1]) %}
-                                <option value="{{ episode }}"> episode {{ episode }} </option>
+                        <select name = "episode" class="episode-select">
+                            {% for episode in range(1, max_data[row[1]]["episodes_by_season"][selected_season] + 1) %}
+                                <option value="{{ episode }}" {% if episode == row[7] %}selected{% endif %}> Episode {{ episode }} </option>
                             {% endfor %}
                         </select>
-                        <input name = "action" value = "set" type="">
+                        <input name = "action" value = "set" type="hidden">
+                        <button type="submit" class="btn btn-primary btn-sm"> Set </button>
                     </form>
                 </div>
                 <!-- Forward Pill -->
@@ -71,7 +73,9 @@
                 </form>
             </td>
             <!-- Latest Update -->
-            <td> TODO </td>
+            <td>
+                Season {{ max_data[row[1]]["max_season"] }} Episode {{ max_data[row[1]]["max_episode"] }}
+            </td>
             <!-- Action -->
             <td>
                 <form action="/details" method="get">
@@ -89,4 +93,23 @@
         {% endfor %}
     </tbody>
 </table>
+<script>
+    function updateEpisodes(seasonSelect) {
+        let selectedSeason = seasonSelect.value;
+        let episodesBySeason = JSON.parse(seasonSelect.dataset.episodes);
+        let episodeCount = episodesBySeason[selectedSeason];
+
+        let form = seasonSelect.closest("form");
+        let episodeSelect = form.querySelector(".episode-select");
+
+        episodeSelect.innerHTML = "";
+
+        for (let episode = 1; episode <= episodeCount; episode++) {
+            let option = document.createElement("option");
+            option.value = episode;
+            option.textContent = "Episode " + episode;
+            episodeSelect.appendChild(option);
+        }
+    }
+</script>
 {% endblock %}
