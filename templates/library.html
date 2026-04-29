@@ -70,7 +70,11 @@
                     <input name = "action" value="increase" type="hidden">
                     <input name = "season" value=" {{ row[6]}}" type="hidden">
                     <input name = "episode" value=" {{ row[7]}}" type="hidden">
+                    {% if {{ row[7] }}== max_data[row[1]]["episodes_by_season"][selected_season] %}
+                    <button type="submit" class="btn btn-primary btn-sm" disabled >+1 Episode</button>
+                    {% else %}
                     <button type="submit" class="btn btn-primary btn-sm">+1 Episode</button>
+                    {% endif %}
                 </form>
             </td>
             <!-- Latest Update -->
