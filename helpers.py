@@ -15,7 +15,8 @@ def startdb():
     status TEXT,
     premiered TEXT,
     season INTEGER,
-    episode INTEGER
+    episode INTEGER,
+    finished INTEGER
     )
     """)
     conn.commit()

@@ -43,10 +43,18 @@ def library():
     #############DB CURSOR#############
     conn, cur = helpers.get_db()
     rows = cur.execute("SELECT * FROM library").fetchall()
+    watching_rows = []
+    finished_rows = []
     conn.close()
     #############
     max_data = {}
     for row in rows:
+        #######FINISHED/UNFINISHED#######
+        if row[8] == 0:
+            watching_rows.append(row)
+        else:
+            finished_rows.append(row)
+        ##################
         tvmaze_id = row[1]
         max_season = helpers.max_season(tvmaze_id)
         max_episode = helpers.max_episode(tvmaze_id, max_season)
@@ -59,7 +67,7 @@ def library():
             episodes_by_season[season] = helpers.max_episode(tvmaze_id,season)
         max_data[tvmaze_id]["episodes_by_season"] = episodes_by_season
     #############
-    return render_template("library.html",rows = rows, max_data = max_data)
+    return render_template("library.html",watching_rows = watching_rows, finished_rows = finished_rows, max_data = max_data)
 
 @app.route("/progress", methods=["POST"])
 def progress():
@@ -80,12 +88,18 @@ def progress():
     #########
     if action == "increase":
         tvmaze_id,season,episode = helpers.next_ep(tvmaze_id,season,episode)
-        cur.execute("UPDATE library SET episode = ?, season = ? WHERE tvmaze_id = ?",(episode,season,tvmaze_id))
+        cur.execute("UPDATE library SET episode = ?, season = ?, finished = ? WHERE tvmaze_id = ?",(episode,season,0,tvmaze_id))
     elif action == "decrease":
         tvmaze_id,season,episode = helpers.prev_ep(tvmaze_id,season,episode)
-        cur.execute("UPDATE library SET episode = ?, season = ? WHERE tvmaze_id = ?",(episode,season,tvmaze_id))
+        cur.execute("UPDATE library SET episode = ?, season = ?, finished = ? WHERE tvmaze_id = ?",(episode,season,0,tvmaze_id))
     elif action == "set":
-        cur.execute("UPDATE library SET episode=?, season=? WHERE tvmaze_id=?",(episode,season,tvmaze_id))
+        cur.execute("UPDATE library SET episode=?, season=?, finished = ? WHERE tvmaze_id=?",(episode,season,0,tvmaze_id))
+    elif action == "finished":
+        max_season = helpers.max_season(tvmaze_id)
+        max_episode = helpers.max_episode(tvmaze_id,max_season)
+        cur.execute("UPDATE library SET episode = ?, season = ?, finished = ? WHERE tvmaze_id = ?", (max_episode, max_season, 1, tvmaze_id))
+    elif action == "unfinished":
+        cur.execute("UPDATE library SET finished = ? WHERE tvmaze_id = ?", (0,tvmaze_id))
     helpers.close_db(conn)
     return redirect(url_for("library"))
 

@@ -4,6 +4,7 @@
 {% block body %}
 <h1>Library</h1>
 <p>Welcome to your library</p>
+<h2>Watching</h2>
 <table>
     <thead>
         <tr>
@@ -17,7 +18,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for row in rows %}
+        {% for row in watching_rows %}
         <tr>
             <!-- Image -->
             <td>
@@ -87,6 +88,86 @@
                 <form action="/remove" method="post">
                     <input name="remove" type="hidden" value="{{ row[1] }}">
                     <button type="submit">Remove</button>
+                </form>
+                <form action="/progress" method="post">
+                    <input name="action" type="hidden" value="finished">
+                    <input name="id" type="hidden" value="{{ row[1] }}">
+                    <button type="submit">Finished</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<h2> Finished </h2>
+<table>
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>Your progress</th>
+            <th>Latest Update</th>
+            <th>Action</th>
+            <th>Remove</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in finished_rows %}
+        <tr>
+            <!-- Image -->
+            <td>
+                <img src="{{ row[3] }}" alt="{{ row[2] }}">
+            </td>
+            <!-- Name -->
+            <td> {{ row[2] }} </td>
+            <!-- Status -->
+            <td> {{ row[4] }} </td>
+            <!-- Your Progress -->
+            <td>
+                <!-- Button -->
+                <button type="button" class="button" onclick="togglePopup(this)">
+                    Finished
+                </button>
+                <div class="popup">
+                    <form action = "/progress" method="post">
+                        <input name = "id" value = "{{row[1]}}" type="hidden">
+                        {% set selected_season = row[6] or 1 %}
+                        <select name="season" onchange="updateEpisodes(this)" data-episodes='{{max_data[row[1]]["episodes_by_season"] | tojson }}'>
+                            {% for season in range(1, max_data[row[1]]["max_season"] + 1 )%}
+                                <option value="{{ season }}" {% if season == selected_season %}selected{% endif %}> Season {{ season }} </option>
+                            {% endfor %}
+                        </select>
+                        <select name = "episode" class="episode-select">
+                            {% for episode in range(1, max_data[row[1]]["episodes_by_season"][selected_season] + 1) %}
+                                <option value="{{ episode }}" {% if episode == row[7] %}selected{% endif %}> Episode {{ episode }} </option>
+                            {% endfor %}
+                        </select>
+                        <input name = "action" value = "set" type="hidden">
+                        <button type="submit" class="btn btn-primary btn-sm"> Set </button>
+                    </form>
+                </div>
+                </td>
+            <!-- Latest Update -->
+            <td>
+                Season {{ max_data[row[1]]["max_season"] }} Episode {{ max_data[row[1]]["max_episode"] }}
+            </td>
+            <!-- Action -->
+            <td>
+                <form action="/details" method="get">
+                    <input name="id" type="hidden" value="{{ row[1] }}">
+                    <button type="submit">See More</button>
+                </form>
+            </td>
+            <td>
+                <form action="/remove" method="post">
+                    <input name="remove" type="hidden" value="{{ row[1] }}">
+                    <button type="submit">Remove</button>
+                </form>
+                <form action="/progress" method="post">
+                    <input name="action" type="hidden" value="unfinished">
+                    <input name="id" type="hidden" value="{{ row[1] }}">
+                    <button type="submit">Unfinished</button>
                 </form>
             </td>
         </tr>
