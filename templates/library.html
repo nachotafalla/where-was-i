@@ -14,7 +14,7 @@
             <th>Your progress</th>
             <th>Latest Update</th>
             <th>Action</th>
-            <th>Remove</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -34,8 +34,8 @@
                 <form action = "/progress" method = "post">
                     <input name = "id" value="{{ row[1] }}" type="hidden">
                     <input name = "action" value="decrease" type="hidden">
-                    <input name = "season" value=" {{row[6]}}" type="hidden">
-                    <input name = "episode" value=" {{row[7]}}" type="hidden">
+                    <input name = "season" value="{{row[6]}}" type="hidden">
+                    <input name = "episode" value="{{row[7]}}" type="hidden">
                     {% if row[6] == 0 and row[7] == 0 %}
                     <button type="submit" class="btn btn-primary btn-sm" disabled>-1 Episode</button>
                     {% else %}
