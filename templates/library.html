@@ -34,9 +34,13 @@
                 <form action = "/progress" method = "post">
                     <input name = "id" value="{{ row[1] }}" type="hidden">
                     <input name = "action" value="decrease" type="hidden">
-                    <input name = "season" value=" {{ row[6]}}" type="hidden">
-                    <input name = "episode" value=" {{ row[7]}}" type="hidden">
+                    <input name = "season" value=" {{row[6]}}" type="hidden">
+                    <input name = "episode" value=" {{row[7]}}" type="hidden">
+                    {% if row[6] == 0 and row[7] == 0 %}
+                    <button type="submit" class="btn btn-primary btn-sm" disabled>-1 Episode</button>
+                    {% else %}
                     <button type="submit" class="btn btn-primary btn-sm">-1 Episode</button>
+                    {% endif %}
                 </form>
                 <!-- Button -->
                 <button type="button" class="button" onclick="togglePopup(this)">
@@ -68,9 +72,9 @@
                 <form action = "/progress" method = "post">
                     <input name = "id" value="{{ row[1] }}" type="hidden">
                     <input name = "action" value="increase" type="hidden">
-                    <input name = "season" value=" {{ row[6]}}" type="hidden">
-                    <input name = "episode" value=" {{ row[7]}}" type="hidden">
-                    {% if {{ row[7] }}== max_data[row[1]]["episodes_by_season"][selected_season] %}
+                    <input name = "season" value="{{ row[6] }}" type="hidden">
+                    <input name = "episode" value="{{ row[7] }}" type="hidden">
+                    {% if row[6] == max_data[row[1]]["max_season"] and row[7] == max_data[row[1]]["max_episode"] %}
                     <button type="submit" class="btn btn-primary btn-sm" disabled >+1 Episode</button>
                     {% else %}
                     <button type="submit" class="btn btn-primary btn-sm">+1 Episode</button>
