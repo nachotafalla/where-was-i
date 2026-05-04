@@ -80,3 +80,14 @@ def max_episode(tvmaze_id,last_season):
         if ep["number"] > max_episode and ep["season"] == last_season:
             max_episode = ep["number"]
     return max_episode
+
+def new_episodes(tvmaze_id, season, episode):
+    new = []
+    response = requests.get(f"https://api.tvmaze.com/shows/{tvmaze_id}/episodes")
+    episodes = response.json()
+    for ep in episodes:
+        if ep["season"] > season:
+            new.append(ep)
+        elif ep["season"] == season and ep["number"] > episode:
+            new.append(ep)
+    return new

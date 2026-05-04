@@ -114,7 +114,6 @@ def save():
     premiered = request.form.get("premiered")
     cur.execute("INSERT INTO library (tvmaze_id,name,image_url,status,premiered) VALUES (?,?,?,?,?)",(tvmaze,name,image,status,premiered))
     helpers.close_db(conn)
-    ###########
     return redirect(url_for("details",id=tvmaze))
 
 @app.route("/remove",methods=["POST"])
@@ -124,7 +123,24 @@ def remove():
     cur.execute("DELETE FROM library WHERE tvmaze_id = ?", (remove, ))
     helpers.close_db(conn)
     return redirect(url_for("library"))
+
+@app.route("/updates",methods=["GET"])
+def updates():
+    conn, cur = helpers.get_db()
+    rows = cur.execute("SELECT * FROM library").fetchall()
+    updates = []
     ##########
+    for row in rows:
+        if row[8] == 1:
+            continue
+        new_episode_list = helpers.new_episodes(row[1], row[6], row[7])
+        if new_episode_list:
+            updates.append({
+                "show": row,
+                "episodes": new_episode_list
+            })
+    helpers.close_db(conn)
+    return render_template("updates.html", updates = updates)
 
     
 
