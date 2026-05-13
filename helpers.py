@@ -1,5 +1,6 @@
 import sqlite3
 import requests
+from datetime import date
 
 
 
@@ -86,6 +87,11 @@ def new_episodes(tvmaze_id, season, episode):
     response = requests.get(f"https://api.tvmaze.com/shows/{tvmaze_id}/episodes")
     episodes = response.json()
     for ep in episodes:
+        if not ep["airdate"]:
+            continue
+        airdate = date.fromisoformat(ep["airdate"])
+        if airdate > date.today():
+            continue
         if ep["season"] > season:
             new.append(ep)
         elif ep["season"] == season and ep["number"] > episode:

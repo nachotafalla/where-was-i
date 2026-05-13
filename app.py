@@ -11,7 +11,21 @@ helpers.startdb()
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    conn, cur = helpers.get_db()
+    rows = cur.execute("SELECT * FROM library").fetchall()
+    helpers.close_db(conn)
+    ########
+    watching_count = 0
+    finished_count = 0
+    updates_count = 0
+    ########
+    for row in rows:
+        if row[8] == 1:
+            finished_count = finished_count + 1
+        else:
+            watching_count = watching_count + 1
+
+    return render_template("index.html",watching_count=watching_count,finished_count=finished_count, updates_count=updates_count)
 
 @app.route("/search", methods=["GET"])
 def search():
