@@ -25,6 +25,11 @@ def index():
         else:
             watching_count = watching_count + 1
 
+            new_episode_list = helpers.new_episodes(row[1], row[6], row[7])
+
+            if new_episode_list:
+                updates_count = updates_count + 1 
+
     return render_template("index.html",watching_count=watching_count,finished_count=finished_count, updates_count=updates_count)
 
 @app.route("/search", methods=["GET"])
@@ -124,9 +129,11 @@ def save():
     tvmaze = request.form.get("id")
     name = request.form.get("name")
     image = request.form.get("image")
+    if not image:
+        image = ""
     status = request.form.get("status")
     premiered = request.form.get("premiered")
-    cur.execute("INSERT INTO library (tvmaze_id,name,image_url,status,premiered) VALUES (?,?,?,?,?)",(tvmaze,name,image,status,premiered))
+    cur.execute("INSERT OR IGNORE INTO library (tvmaze_id,name,image_url,status,premiered,season,episode,finished) VALUES (?,?,?,?,?,0,0,0)",(tvmaze,name,image,status,premiered))
     helpers.close_db(conn)
     return redirect(url_for("details",id=tvmaze))
 
@@ -142,6 +149,7 @@ def remove():
 def updates():
     conn, cur = helpers.get_db()
     rows = cur.execute("SELECT * FROM library").fetchall()
+    helpers.close_db(conn)
     updates = []
     ##########
     for row in rows:
@@ -153,7 +161,6 @@ def updates():
                 "show": row,
                 "episodes": new_episode_list
             })
-    helpers.close_db(conn)
     return render_template("updates.html", updates = updates)
 
     
