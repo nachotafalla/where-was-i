@@ -22,7 +22,11 @@
         <tr>
             <!-- Image -->
             <td>
+                {% if row[3] %}
                 <img src="{{ row[3] }}" alt="{{ row[2] }}">
+                {% else %}
+                No image available
+                {% endif %}
             </td>
             <!-- Name -->
             <td> {{ row[2] }} </td>
@@ -52,6 +56,7 @@
                 </button>
                 <div class="popup">
                     <form action = "/progress" method="post">
+                        {% if max_data[row[1]]["max_season"] > 0 %}
                         <input name = "id" value = "{{row[1]}}" type="hidden">
                         {% set selected_season = row[6] or 1 %}
                         <select name="season" onchange="updateEpisodes(this)" data-episodes='{{max_data[row[1]]["episodes_by_season"] | tojson }}'>
@@ -66,6 +71,9 @@
                         </select>
                         <input name = "action" value = "set" type="hidden">
                         <button type="submit" class="btn btn-primary btn-sm"> Set </button>
+                        {% else %}
+                        <p>No episodes available yet.</p>
+                        {% endif %}
                     </form>
                 </div>
                 <!-- Forward Pill -->
@@ -83,7 +91,11 @@
             </td>
             <!-- Latest Update -->
             <td>
+                {% if max_data[row[1]]["max_season"] %}
                 Season {{ max_data[row[1]]["max_season"] }} Episode {{ max_data[row[1]]["max_episode"] }}
+                {% else %}
+                No episodes available yet
+                {% endif %}
             </td>
             <!-- Action -->
             <td>
@@ -117,7 +129,7 @@
             <th>Your progress</th>
             <th>Latest Update</th>
             <th>Action</th>
-            <th>Remove</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -125,7 +137,11 @@
         <tr>
             <!-- Image -->
             <td>
+                {% if row[3] %}
                 <img src="{{ row[3] }}" alt="{{ row[2] }}">
+                {% else %}
+                No image available
+                {% endif %}
             </td>
             <!-- Name -->
             <td> {{ row[2] }} </td>
@@ -139,6 +155,7 @@
                 </button>
                 <div class="popup">
                     <form action = "/progress" method="post">
+                        {% if max_data[row[1]]["max_season"] > 0 %}
                         <input name = "id" value = "{{row[1]}}" type="hidden">
                         {% set selected_season = row[6] or 1 %}
                         <select name="season" onchange="updateEpisodes(this)" data-episodes='{{max_data[row[1]]["episodes_by_season"] | tojson }}'>
@@ -153,12 +170,19 @@
                         </select>
                         <input name = "action" value = "set" type="hidden">
                         <button type="submit" class="btn btn-primary btn-sm"> Set </button>
+                        {% else %}
+                        <p>No episodes available yet.</p>
+                        {% endif %}
                     </form>
                 </div>
                 </td>
             <!-- Latest Update -->
             <td>
+                {% if max_data[row[1]]["max_season"] %}
                 Season {{ max_data[row[1]]["max_season"] }} Episode {{ max_data[row[1]]["max_episode"] }}
+                {%else%}
+                No episodes available yet
+                {% endif %}
             </td>
             <!-- Action -->
             <td>

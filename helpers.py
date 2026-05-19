@@ -15,11 +15,14 @@ def startdb():
     image_url TEXT,
     status TEXT,
     premiered TEXT,
-    season INTEGER,
-    episode INTEGER,
-    finished INTEGER
+    season INTEGER DEFAULT 0,
+    episode INTEGER DEFAULT 0,
+    finished INTEGER DEFAULT 0
     )
     """)
+    cur.execute("UPDATE library SET season = 0 WHERE season IS NULL")
+    cur.execute("UPDATE library SET episode = 0 WHERE episode IS NULL")
+    cur.execute("UPDATE library SET finished = 0 WHERE finished IS NULL")
     conn.commit()
     conn.close()
 
@@ -41,6 +44,8 @@ def close_db(conn):
 def next_ep(tvmaze_id,season,episode):
     response = requests.get(f"https://api.tvmaze.com/shows/{tvmaze_id}/episodes")
     episodes = response.json()
+    if not episodes:
+        return (tvmaze_id, season, episode)
     if season== 0 and episode== 0:
         return (tvmaze_id,episodes[0]["season"],episodes[0]["number"])
     for i, ep in enumerate(episodes): 
@@ -54,14 +59,16 @@ def next_ep(tvmaze_id,season,episode):
 def prev_ep(tvmaze_id,season,episode):
     response = requests.get(f"https://api.tvmaze.com/shows/{tvmaze_id}/episodes")
     episodes = response.json()
+    if not episodes:
+        return (tvmaze_id, season, episode)
     if season== 0 and episode== 0:
         return (tvmaze_id,season,episode)
     for i, ep in enumerate(episodes): 
         if ep["season"] == season and ep["number"] == episode:
             if i-1 < 0 :
-                return (tvmaze_id,season,episode)  
-            next_episode = episodes[i-1]
-            return (tvmaze_id,next_episode["season"],next_episode["number"])
+                return (tvmaze_id,0,0)  
+            previous_episode = episodes[i-1]
+            return (tvmaze_id,previous_episode["season"],previous_episode["number"])
     return (tvmaze_id,season,episode)
 
 def max_season(tvmaze_id):

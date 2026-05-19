@@ -10,7 +10,11 @@
 <form action="/save" method="post">
     <input name="id" type="hidden" value="{{show.id}}">
     <input name="name" type="hidden" value="{{show.name}}">
-    <input name="image" type="hidden" value="{{show.image.medium}}">
+    {% if show.image %}
+    <input name="image" type="hidden" value="{{ show.image.medium }}">
+    {% else %}
+    <input name="image" type="hidden" value="">
+    {% endif %}
     <input name="status" type="hidden" value="{{show.status}}">
     <input name="premiered" type="hidden" value="{{show.premiered}}">
     <button type="submit">Add to Library</button>

@@ -3,12 +3,14 @@
 {% block body %}
 <h1>Search</h1>
 <form action="/search" method="get">
-    <input name="query" type="text" placeholder="Show/Movie" autofocus>
+    <input name="query" type="text" placeholder="Show" autofocus>
     <button type="submit">Search</button>
 </form>
 {% for result in results %}
 <div class="card" style="width: 18rem;">
-  <img src="{{ result.show.image.medium }}" alt="{{ result.show.name }}">
+  {% if result.show.image %}
+    <img src="{{ result.show.image.medium }}" alt="{{ result.show.name }}">
+  {% endif %}
   <div class="card-body">
     <h5 class="card-title"> {{result.show.name}} </h5>
     <p class="card-text">{{result.show.rating.average}}.</p>
