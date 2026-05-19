@@ -43,6 +43,8 @@ def close_db(conn):
 
 def next_ep(tvmaze_id,season,episode):
     response = requests.get(f"https://api.tvmaze.com/shows/{tvmaze_id}/episodes")
+    if response.status_code != 200:
+        return (tvmaze_id, season, episode)
     episodes = response.json()
     if not episodes:
         return (tvmaze_id, season, episode)
@@ -58,6 +60,8 @@ def next_ep(tvmaze_id,season,episode):
 
 def prev_ep(tvmaze_id,season,episode):
     response = requests.get(f"https://api.tvmaze.com/shows/{tvmaze_id}/episodes")
+    if response.status_code != 200:
+        return (tvmaze_id,season,episode)
     episodes = response.json()
     if not episodes:
         return (tvmaze_id, season, episode)
@@ -73,6 +77,8 @@ def prev_ep(tvmaze_id,season,episode):
 
 def max_season(tvmaze_id):
     response = requests.get(f"https://api.tvmaze.com/shows/{tvmaze_id}/episodes")
+    if response.status_code != 200:
+        return 0
     episodes = response.json()
     max_season = 0
     for ep in episodes:
@@ -82,6 +88,8 @@ def max_season(tvmaze_id):
 
 def max_episode(tvmaze_id,last_season):
     response = requests.get(f"https://api.tvmaze.com/shows/{tvmaze_id}/episodes")
+    if response.status_code != 200:
+        return 0
     episodes = response.json()
     max_episode = 0
     for ep in episodes:
@@ -92,6 +100,8 @@ def max_episode(tvmaze_id,last_season):
 def new_episodes(tvmaze_id, season, episode):
     new = []
     response = requests.get(f"https://api.tvmaze.com/shows/{tvmaze_id}/episodes")
+    if response.status_code != 200:
+        return []
     episodes = response.json()
     for ep in episodes:
         if not ep["airdate"]:

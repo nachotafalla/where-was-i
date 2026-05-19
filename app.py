@@ -38,8 +38,9 @@ def search():
         return render_template("search.html",results = [])
     query = request.args.get("query")
     response = requests.get("https://api.tvmaze.com/search/shows?", params={"q": query})
+    if response.status_code != 200:
+        return render_template("search.html", results=[])
     data = response.json()
-    print(data)
     return render_template("search.html",results=data)
     
 @app.route("/details", methods=["GET"])
@@ -48,6 +49,9 @@ def details():
     ##################
     show_id = request.args.get("id")
     response = requests.get(f"https://api.tvmaze.com/shows/{show_id}")
+    if response.status_code != 200:
+        helpers.close_db(conn)
+        return redirect(url_for("search"))
     data = response.json()
     #######################
     rows = cur.execute("SELECT * FROM library WHERE tvmaze_id = ?", (show_id,)).fetchall()
@@ -64,7 +68,7 @@ def library():
     rows = cur.execute("SELECT * FROM library").fetchall()
     watching_rows = []
     finished_rows = []
-    conn.close()
+    helpers.close_db(conn)
     #############
     max_data = {}
     for row in rows:
