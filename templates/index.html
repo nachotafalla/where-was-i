@@ -1,42 +1,56 @@
 {% extends "layout.html" %}
 {% block title%} Dashboard {% endblock %}
 {% block body %}
-
-<div class="mb-4">
-    <h1>Welcome back</h1>
-    <p class="text-muted">Here's what's happening in your library.</p>
+<div class="dashboard-container">
+   <div class="mb-4">
+      <h1>Welcome back</h1>
+      <p class="lead text-muted">Here's what's happening in your library.</p>
+   </div>
+   <div class="card-deck mt-4">
+      <div class="card dashboard-card mb-3">
+         <div class="card-body p-4">
+            <h5 class="card-title">Currently Watching</h5>
+            <p class="display-4 font-weight-bold mb-2">{{ watching_count }}</p>
+            <p class="card-text"><small class="text-light">Shows you are still tracking</small></p>
+            <a href="/library" class="btn btn-outline-light">View Library</a>
+         </div>
+      </div>
+      <div class="card dashboard-card mb-3">
+         <div class="card-body p-4">
+            <h5 class="card-title">Finished Shows</h5>
+            <p class="display-4 font-weight-bold mb-2">{{ finished_count }}</p>
+            <p class="card-text"><small class="text-light">These are your finished shows</small></p>
+            <a href="/library" class="btn btn-outline-light">View Library</a>
+         </div>
+      </div>
+      <div class="card dashboard-card mb-3">
+         <div class="card-body p-4">
+            <h5 class="card-title">Shows with Updates</h5>
+            <p class="display-4 font-weight-bold mb-2">{{ updates_count }}</p>
+            <p class="card-text"><small class="text-light">You have shows with updates</small></p>
+            <a href="/updates" class="btn btn-outline-light">Check Updates</a>
+         </div>
+      </div>
+   </div>
+   <div class="dashboard-panel mt-4 p-4">
+      <h5>Library Status</h5>
+      <p class="mb-0">
+         You are currently tracking {{ watching_count }} shows and have finished {{ finished_count }}.
+         {{ updates_count }} shows have new episodes available.
+      </p>
+   </div>
+   <h2 class="mt-5 mb-3">Quick Actions</h2>
+   <div class="btn-group" role="group" aria-label="Basic example">
+      <a href="/search" class="btn btn-outline-dark">Search Shows</a>
+      <a href="/library" class="btn btn-outline-dark">Library</a>
+      <a href="/updates" class="btn btn-outline-dark">Updates</a>
+   </div>
+   <div class="card dashboard-panel mt-4">
+      <div class="card-body">
+         <h5 class="card-title">Next Up</h5>
+         <p class="card-text">Check your updates to see which shows have new aired episodes.</p>
+         <a href="/updates" class="btn btn-dark">Check Updates</a>
+      </div>
+   </div>
 </div>
-
-<div class="card-deck mt-4">
-  <div class="card text-white bg-dark mb-3">
-    <div class="card-body p-4">
-      <h5 class="card-title">Currently Watching</h5>
-      <p class="display-4 font-weight-bold mb-2">{{ watching_count }}</p>
-      <p class="card-text"><small class="text-muted">Shows you are still tracking</small></p>
-      <a href="/library" class="btn btn-primary">View Library</a>
-    </div>
-  </div>
-
-
-  <div class="card text-white bg-dark mb-3">
-    <div class="card-body p-4">
-      <h5 class="card-title">Finished Shows</h5>
-      <p class="display-4 font-weight-bold mb-2">{{ finished_count }}</p>
-      <p class="card-text"><small class="text-muted">These are your finished shows</small></p>
-      <a href="/library" class="btn btn-primary">View Library</a>
-    </div>
-  </div>
-
-
-  <div class="card text-white bg-dark mb-3">
-    <div class="card-body p-4">
-      <h5 class="card-title">Shows with Updates</h5>
-      <p class="display-4 font-weight-bold mb-2">{{ updates_count }}</p>
-      <p class="card-text"><small class="text-muted"> You have shows with updates </small></p>
-      <a href="/updates" class="btn btn-primary">Check Updates</a>
-    </div>
-  </div>
-</div>
-
-
 {% endblock %}
