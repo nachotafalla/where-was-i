@@ -1,38 +1,42 @@
 {% extends "layout.html" %}
 {% block title%} Dashboard {% endblock %}
 {% block body %}
-<h1>Welcome back</h1>
-<p>Here's what's happening in your library.</p>
-<div class="card-deck">
+
+<div class="mb-4">
+    <h1>Welcome back</h1>
+    <p class="text-muted">Here's what's happening in your library.</p>
+</div>
+
+<div class="card-deck mt-4">
   <div class="card text-white bg-dark mb-3">
-    <img class="card-img-top" src="..." alt="Card image cap">
-    <div class="card-body">
+    <div class="card-body p-4">
       <h5 class="card-title">Currently Watching</h5>
-      <p class="card-text">{{ watching_count }}</p>
+      <p class="display-4 font-weight-bold mb-2">{{ watching_count }}</p>
       <p class="card-text"><small class="text-muted">Shows you are still tracking</small></p>
-      <a href="/library" class="btn btn-primary">Your Library</a>
+      <a href="/library" class="btn btn-primary">View Library</a>
     </div>
   </div>
+
+
   <div class="card text-white bg-dark mb-3">
-    <img class="card-img-top" src="..." alt="Card image cap">
-    <div class="card-body">
+    <div class="card-body p-4">
       <h5 class="card-title">Finished Shows</h5>
-      <p class="card-text">{{ finished_count }}</p>
+      <p class="display-4 font-weight-bold mb-2">{{ finished_count }}</p>
       <p class="card-text"><small class="text-muted">These are your finished shows</small></p>
-      <a href="/library" class="btn btn-primary">Your Library</a>
+      <a href="/library" class="btn btn-primary">View Library</a>
     </div>
   </div>
+
+
   <div class="card text-white bg-dark mb-3">
-    <img class="card-img-top" src="..." alt="Card image cap">
-    <div class="card-body">
+    <div class="card-body p-4">
       <h5 class="card-title">Shows with Updates</h5>
-      <p class="card-text">{{ updates_count }}</p>
+      <p class="display-4 font-weight-bold mb-2">{{ updates_count }}</p>
       <p class="card-text"><small class="text-muted"> You have shows with updates </small></p>
       <a href="/updates" class="btn btn-primary">Check Updates</a>
     </div>
   </div>
 </div>
-<p>Watching: {{ watching_count }}</p>
-<p>Finished: {{ finished_count }}</p>
-<p>Shows with updates: {{ updates_count }}</p>
+
+
 {% endblock %}
