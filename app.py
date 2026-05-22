@@ -39,9 +39,9 @@ def search():
     query = request.args.get("query")
     response = requests.get("https://api.tvmaze.com/search/shows?", params={"q": query})
     if response.status_code != 200:
-        return render_template("search.html", results=[])
+        return render_template("search.html", results=[], query="")
     data = response.json()
-    return render_template("search.html",results=data)
+    return render_template("search.html", results=data, query=query)
     
 @app.route("/details", methods=["GET"])
 def details():

@@ -1,22 +1,80 @@
 {% extends "layout.html" %}
 
+{% block title %} Search {% endblock %}
+
 {% block body %}
-<h1>Search</h1>
-<form action="/search" method="get">
-    <input name="query" type="text" placeholder="Show" autofocus>
-    <button type="submit">Search</button>
-</form>
-{% for result in results %}
-<div class="card" style="width: 18rem;">
-  {% if result.show.image %}
-    <img src="{{ result.show.image.medium }}" alt="{{ result.show.name }}">
-  {% endif %}
-  <div class="card-body">
-    <h5 class="card-title"> {{result.show.name}} </h5>
-    <p class="card-text">{{result.show.rating.average}}.</p>
-    <a href="/details?id={{result.show.id}}" class="btn btn-primary">See More</a>
-  </div>
+<div class="dashboard-container">
+    <div class="mb-4">
+        <h1 class="display-5 fw-bold">Search Shows</h1>
+        <p class="lead dashboard-muted">Find a show from TVMaze and add it to your library.</p>
+    </div>
+
+    <div class="dashboard-panel p-4 mb-4">
+        <form action="/search" method="get" class="d-flex gap-2">
+            <input name="query" type="text" class="form-control" placeholder="Search for a show" value="{{ query }}" autofocus>
+            <button type="submit" class="btn btn-outline-light">Search</button>
+        </form>
+    </div>
+
+    {% if results %}
+        <h2 class="mb-3">Results</h2>
+
+        <div class="row g-4">
+            {% for result in results %}
+                <div class="col-md-4">
+                    <div class="card dashboard-card h-100">
+                        {% if result.show.image %}
+                        <img src="{{ result.show.image.medium }}" class="card-img-top search-poster" alt="{{ result.show.name }}">
+                        {% else %}
+                        <div class="search-poster search-poster-placeholder d-flex align-items-center justify-content-center">
+                          No image available
+                        </div>
+                        {% endif %}
+
+                        <div class="card-body p-4">
+                            <h5 class="card-title">{{ result.show.name }}</h5>
+
+                            <p class="dashboard-muted mb-2">
+                                {% if result.show.status %}
+                                    Status: {{ result.show.status }}
+                                {% else %}
+                                    Status: Unknown
+                                {% endif %}
+                            </p>
+
+                            <p class="dashboard-muted mb-2">
+                                {% if result.show.premiered %}
+                                    Premiered: {{ result.show.premiered }}
+                                {% else %}
+                                    Premiered: Unknown
+                                {% endif %}
+                            </p>
+
+                            <p class="dashboard-muted mb-3">
+                                {% if result.show.rating.average %}
+                                    Rating: {{ result.show.rating.average }}
+                                {% else %}
+                                    Rating: No rating yet
+                                {% endif %}
+                            </p>
+
+                            {% if result.show.genres %}
+                                <p class="dashboard-muted mb-3">
+                                    {{ result.show.genres | join(", ") }}
+                                </p>
+                            {% endif %}
+
+                            <a href="/details?id={{ result.show.id }}" class="btn btn-outline-light btn-sm">See More</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="dashboard-panel p-4">
+            <h3>No results yet.</h3>
+            <p class="dashboard-muted mb-0">Search for a show to get started.</p>
+        </div>
+    {% endif %}
 </div>
-{% endfor %}
-    
 {% endblock %}

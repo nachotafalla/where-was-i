@@ -1,211 +1,256 @@
 {% extends "layout.html" %}
 
 {% block title%} Library {% endblock %}
+
 {% block body %}
-<h1>Library</h1>
-<p>Welcome to your library</p>
-<h2>Watching</h2>
-<table>
-    <thead>
-        <tr>
-            <th>Image</th>
-            <th>Name</th>
-            <th>Status</th>
-            <th>Your progress</th>
-            <th>Latest Update</th>
-            <th>Action</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for row in watching_rows %}
-        <tr>
-            <!-- Image -->
-            <td>
-                {% if row[3] %}
-                <img src="{{ row[3] }}" alt="{{ row[2] }}">
-                {% else %}
-                No image available
-                {% endif %}
-            </td>
-            <!-- Name -->
-            <td> {{ row[2] }} </td>
-            <!-- Status -->
-            <td> {{ row[4] }} </td>
-            <!-- Your Progress -->
-            <td>
-                <!-- Back Pill -->
-                <form action = "/progress" method = "post">
-                    <input name = "id" value="{{ row[1] }}" type="hidden">
-                    <input name = "action" value="decrease" type="hidden">
-                    <input name = "season" value="{{row[6]}}" type="hidden">
-                    <input name = "episode" value="{{row[7]}}" type="hidden">
-                    {% if row[6] == 0 and row[7] == 0 %}
-                    <button type="submit" class="btn btn-primary btn-sm" disabled>-1 Episode</button>
-                    {% else %}
-                    <button type="submit" class="btn btn-primary btn-sm">-1 Episode</button>
-                    {% endif %}
-                </form>
-                <!-- Button -->
-                <button type="button" class="button" onclick="togglePopup(this)">
-                    {% if row[6] and row[7] %}
-                    Season {{ row[6] }} Episode {{ row[7] }}
-                    {% else %}
-                    Not Started
-                    {% endif %}
-                </button>
-                <div class="popup">
-                    <form action = "/progress" method="post">
-                        {% if max_data[row[1]]["max_season"] > 0 %}
-                        <input name = "id" value = "{{row[1]}}" type="hidden">
-                        {% set selected_season = row[6] or 1 %}
-                        <select name="season" onchange="updateEpisodes(this)" data-episodes='{{max_data[row[1]]["episodes_by_season"] | tojson }}'>
-                            {% for season in range(1, max_data[row[1]]["max_season"] + 1 )%}
-                                <option value="{{ season }}" {% if season == selected_season %}selected{% endif %}> Season {{ season }} </option>
-                            {% endfor %}
-                        </select>
-                        <select name = "episode" class="episode-select">
-                            {% for episode in range(1, max_data[row[1]]["episodes_by_season"][selected_season] + 1) %}
-                                <option value="{{ episode }}" {% if episode == row[7] %}selected{% endif %}> Episode {{ episode }} </option>
-                            {% endfor %}
-                        </select>
-                        <input name = "action" value = "set" type="hidden">
-                        <button type="submit" class="btn btn-primary btn-sm"> Set </button>
+<div class="dashboard-container">
+    <div class="mb-4">
+        <h1 class="display-5 fw-bold">Library</h1>
+        <p class="lead dashboard-muted">Manage the shows you are watching and the shows you have finished.</p>
+    </div>
+
+    <div class="dashboard-panel p-4 mt-4">
+        <h2 class="mb-3">Watching</h2>
+
+        <table class="table table-dark table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Your Progress</th>
+                    <th>Latest Update</th>
+                    <th>Details</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in watching_rows %}
+                <tr>
+                    <!-- Image -->
+                    <td>
+                        {% if row[3] %}
+                            <img src="{{ row[3] }}" alt="{{ row[2] }}" class="img-fluid rounded" style="max-width: 90px;">
                         {% else %}
-                        <p>No episodes available yet.</p>
+                            <span class="dashboard-muted">No image available</span>
                         {% endif %}
-                    </form>
-                </div>
-                <!-- Forward Pill -->
-                <form action = "/progress" method = "post">
-                    <input name = "id" value="{{ row[1] }}" type="hidden">
-                    <input name = "action" value="increase" type="hidden">
-                    <input name = "season" value="{{ row[6] }}" type="hidden">
-                    <input name = "episode" value="{{ row[7] }}" type="hidden">
-                    {% if row[6] == max_data[row[1]]["max_season"] and row[7] == max_data[row[1]]["max_episode"] %}
-                    <button type="submit" class="btn btn-primary btn-sm" disabled >+1 Episode</button>
-                    {% else %}
-                    <button type="submit" class="btn btn-primary btn-sm">+1 Episode</button>
-                    {% endif %}
-                </form>
-            </td>
-            <!-- Latest Update -->
-            <td>
-                {% if max_data[row[1]]["max_season"] %}
-                Season {{ max_data[row[1]]["max_season"] }} Episode {{ max_data[row[1]]["max_episode"] }}
-                {% else %}
-                No episodes available yet
-                {% endif %}
-            </td>
-            <!-- Action -->
-            <td>
-                <form action="/details" method="get">
-                    <input name="id" type="hidden" value="{{ row[1] }}">
-                    <button type="submit">See More</button>
-                </form>
-            </td>
-            <td>
-                <form action="/remove" method="post">
-                    <input name="remove" type="hidden" value="{{ row[1] }}">
-                    <button type="submit">Remove</button>
-                </form>
-                <form action="/progress" method="post">
-                    <input name="action" type="hidden" value="finished">
-                    <input name="id" type="hidden" value="{{ row[1] }}">
-                    <button type="submit">Finished</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-<h2> Finished </h2>
-<table>
-    <thead>
-        <tr>
-            <th>Image</th>
-            <th>Name</th>
-            <th>Status</th>
-            <th>Your progress</th>
-            <th>Latest Update</th>
-            <th>Action</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for row in finished_rows %}
-        <tr>
-            <!-- Image -->
-            <td>
-                {% if row[3] %}
-                <img src="{{ row[3] }}" alt="{{ row[2] }}">
-                {% else %}
-                No image available
-                {% endif %}
-            </td>
-            <!-- Name -->
-            <td> {{ row[2] }} </td>
-            <!-- Status -->
-            <td> {{ row[4] }} </td>
-            <!-- Your Progress -->
-            <td>
-                <!-- Button -->
-                <button type="button" class="button" onclick="togglePopup(this)">
-                    Finished
-                </button>
-                <div class="popup">
-                    <form action = "/progress" method="post">
-                        {% if max_data[row[1]]["max_season"] > 0 %}
-                        <input name = "id" value = "{{row[1]}}" type="hidden">
-                        {% set selected_season = row[6] or 1 %}
-                        <select name="season" onchange="updateEpisodes(this)" data-episodes='{{max_data[row[1]]["episodes_by_season"] | tojson }}'>
-                            {% for season in range(1, max_data[row[1]]["max_season"] + 1 )%}
-                                <option value="{{ season }}" {% if season == selected_season %}selected{% endif %}> Season {{ season }} </option>
-                            {% endfor %}
-                        </select>
-                        <select name = "episode" class="episode-select">
-                            {% for episode in range(1, max_data[row[1]]["episodes_by_season"][selected_season] + 1) %}
-                                <option value="{{ episode }}" {% if episode == row[7] %}selected{% endif %}> Episode {{ episode }} </option>
-                            {% endfor %}
-                        </select>
-                        <input name = "action" value = "set" type="hidden">
-                        <button type="submit" class="btn btn-primary btn-sm"> Set </button>
+                    </td>
+
+                    <!-- Name -->
+                    <td>{{ row[2] }}</td>
+
+                    <!-- Status -->
+                    <td>{{ row[4] }}</td>
+
+                    <!-- Your Progress -->
+                    <td>
+                        <!-- Back Pill -->
+                        <form action="/progress" method="post" class="mb-2">
+                            <input name="id" value="{{ row[1] }}" type="hidden">
+                            <input name="action" value="decrease" type="hidden">
+                            <input name="season" value="{{ row[6] }}" type="hidden">
+                            <input name="episode" value="{{ row[7] }}" type="hidden">
+
+                            {% if row[6] == 0 and row[7] == 0 %}
+                                <button type="submit" class="btn btn-outline-light btn-sm" disabled>-1 Episode</button>
+                            {% else %}
+                                <button type="submit" class="btn btn-outline-light btn-sm">-1 Episode</button>
+                            {% endif %}
+                        </form>
+
+                        <!-- Progress Popup Button -->
+                        <button type="button" class="button mb-2" onclick="togglePopup(this)">
+                            {% if row[6] and row[7] %}
+                                Season {{ row[6] }} Episode {{ row[7] }}
+                            {% else %}
+                                Not Started
+                            {% endif %}
+                        </button>
+
+                        <div class="popup">
+                            <form action="/progress" method="post" class="mt-2">
+                                {% if max_data[row[1]]["max_season"] > 0 %}
+                                    <input name="id" value="{{ row[1] }}" type="hidden">
+                                    {% set selected_season = row[6] or 1 %}
+
+                                    <select name="season" onchange="updateEpisodes(this)" data-episodes='{{ max_data[row[1]]["episodes_by_season"] | tojson }}'>
+                                        {% for season in range(1, max_data[row[1]]["max_season"] + 1) %}
+                                            <option value="{{ season }}" {% if season == selected_season %}selected{% endif %}>Season {{ season }}</option>
+                                        {% endfor %}
+                                    </select>
+
+                                    <select name="episode" class="episode-select">
+                                        {% for episode in range(1, max_data[row[1]]["episodes_by_season"][selected_season] + 1) %}
+                                            <option value="{{ episode }}" {% if episode == row[7] %}selected{% endif %}>Episode {{ episode }}</option>
+                                        {% endfor %}
+                                    </select>
+
+                                    <input name="action" value="set" type="hidden">
+                                    <button type="submit" class="btn btn-outline-light btn-sm">Set</button>
+                                {% else %}
+                                    <p class="dashboard-muted mb-0">No episodes available yet.</p>
+                                {% endif %}
+                            </form>
+                        </div>
+
+                        <!-- Forward Pill -->
+                        <form action="/progress" method="post" class="mt-2">
+                            <input name="id" value="{{ row[1] }}" type="hidden">
+                            <input name="action" value="increase" type="hidden">
+                            <input name="season" value="{{ row[6] }}" type="hidden">
+                            <input name="episode" value="{{ row[7] }}" type="hidden">
+
+                            {% if row[6] == max_data[row[1]]["max_season"] and row[7] == max_data[row[1]]["max_episode"] %}
+                                <button type="submit" class="btn btn-outline-light btn-sm" disabled>+1 Episode</button>
+                            {% else %}
+                                <button type="submit" class="btn btn-outline-light btn-sm">+1 Episode</button>
+                            {% endif %}
+                        </form>
+                    </td>
+
+                    <!-- Latest Update -->
+                    <td>
+                        {% if max_data[row[1]]["max_season"] %}
+                            Season {{ max_data[row[1]]["max_season"] }} Episode {{ max_data[row[1]]["max_episode"] }}
                         {% else %}
-                        <p>No episodes available yet.</p>
+                            <span class="dashboard-muted">No episodes available yet</span>
                         {% endif %}
-                    </form>
-                </div>
-                </td>
-            <!-- Latest Update -->
-            <td>
-                {% if max_data[row[1]]["max_season"] %}
-                Season {{ max_data[row[1]]["max_season"] }} Episode {{ max_data[row[1]]["max_episode"] }}
-                {%else%}
-                No episodes available yet
-                {% endif %}
-            </td>
-            <!-- Action -->
-            <td>
-                <form action="/details" method="get">
-                    <input name="id" type="hidden" value="{{ row[1] }}">
-                    <button type="submit">See More</button>
-                </form>
-            </td>
-            <td>
-                <form action="/remove" method="post">
-                    <input name="remove" type="hidden" value="{{ row[1] }}">
-                    <button type="submit">Remove</button>
-                </form>
-                <form action="/progress" method="post">
-                    <input name="action" type="hidden" value="unfinished">
-                    <input name="id" type="hidden" value="{{ row[1] }}">
-                    <button type="submit">Unfinished</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+                    </td>
+
+                    <!-- Details -->
+                    <td>
+                        <form action="/details" method="get">
+                            <input name="id" type="hidden" value="{{ row[1] }}">
+                            <button type="submit" class="btn btn-outline-light btn-sm">See More</button>
+                        </form>
+                    </td>
+
+                    <!-- Actions -->
+                    <td>
+                        <div class="d-flex flex-wrap gap-2">
+                            <form action="/remove" method="post">
+                                <input name="remove" type="hidden" value="{{ row[1] }}">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Remove</button>
+                            </form>
+
+                            <form action="/progress" method="post">
+                                <input name="action" type="hidden" value="finished">
+                                <input name="id" type="hidden" value="{{ row[1] }}">
+                                <button type="submit" class="btn btn-outline-success btn-sm">Finished</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="dashboard-panel p-4 mt-4">
+        <h2 class="mb-3">Finished</h2>
+
+        <table class="table table-dark table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Your Progress</th>
+                    <th>Latest Update</th>
+                    <th>Details</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in finished_rows %}
+                <tr>
+                    <!-- Image -->
+                    <td>
+                        {% if row[3] %}
+                            <img src="{{ row[3] }}" alt="{{ row[2] }}" class="img-fluid rounded" style="max-width: 90px;">
+                        {% else %}
+                            <span class="dashboard-muted">No image available</span>
+                        {% endif %}
+                    </td>
+
+                    <!-- Name -->
+                    <td>{{ row[2] }}</td>
+
+                    <!-- Status -->
+                    <td>{{ row[4] }}</td>
+
+                    <!-- Your Progress -->
+                    <td>
+                        <button type="button" class="button mb-2" onclick="togglePopup(this)">
+                            Finished
+                        </button>
+
+                        <div class="popup">
+                            <form action="/progress" method="post" class="mt-2">
+                                {% if max_data[row[1]]["max_season"] > 0 %}
+                                    <input name="id" value="{{ row[1] }}" type="hidden">
+                                    {% set selected_season = row[6] or 1 %}
+
+                                    <select name="season" onchange="updateEpisodes(this)" data-episodes='{{ max_data[row[1]]["episodes_by_season"] | tojson }}'>
+                                        {% for season in range(1, max_data[row[1]]["max_season"] + 1) %}
+                                            <option value="{{ season }}" {% if season == selected_season %}selected{% endif %}>Season {{ season }}</option>
+                                        {% endfor %}
+                                    </select>
+
+                                    <select name="episode" class="episode-select">
+                                        {% for episode in range(1, max_data[row[1]]["episodes_by_season"][selected_season] + 1) %}
+                                            <option value="{{ episode }}" {% if episode == row[7] %}selected{% endif %}>Episode {{ episode }}</option>
+                                        {% endfor %}
+                                    </select>
+
+                                    <input name="action" value="set" type="hidden">
+                                    <button type="submit" class="btn btn-outline-light btn-sm">Set</button>
+                                {% else %}
+                                    <p class="dashboard-muted mb-0">No episodes available yet.</p>
+                                {% endif %}
+                            </form>
+                        </div>
+                    </td>
+
+                    <!-- Latest Update -->
+                    <td>
+                        {% if max_data[row[1]]["max_season"] %}
+                            Season {{ max_data[row[1]]["max_season"] }} Episode {{ max_data[row[1]]["max_episode"] }}
+                        {% else %}
+                            <span class="dashboard-muted">No episodes available yet</span>
+                        {% endif %}
+                    </td>
+
+                    <!-- Details -->
+                    <td>
+                        <form action="/details" method="get">
+                            <input name="id" type="hidden" value="{{ row[1] }}">
+                            <button type="submit" class="btn btn-outline-light btn-sm">See More</button>
+                        </form>
+                    </td>
+
+                    <!-- Actions -->
+                    <td>
+                        <div class="d-flex flex-wrap gap-2">
+                            <form action="/remove" method="post">
+                                <input name="remove" type="hidden" value="{{ row[1] }}">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Remove</button>
+                            </form>
+
+                            <form action="/progress" method="post">
+                                <input name="action" type="hidden" value="unfinished">
+                                <input name="id" type="hidden" value="{{ row[1] }}">
+                                <button type="submit" class="btn btn-outline-warning btn-sm">Unfinished</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <script>
     function updateEpisodes(seasonSelect) {
         let selectedSeason = seasonSelect.value;

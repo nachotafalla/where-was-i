@@ -2,37 +2,37 @@
 {% block title%} Dashboard {% endblock %}
 {% block body %}
 <div class="dashboard-container">
-   <div class="mb-4">
-      <h1>Welcome back</h1>
-      <p class="lead text-muted">Here's what's happening in your library.</p>
+   <div>
+      <h1 class="display-5 fw-bold">Welcome back</h1>
+      <p class="lead text-light">Here's what's happening in your library.</p>
    </div>
-   <div class="row mt-4">
+   <div class="row mt-4 g-4">
       <div class="col-md-4">
          <div class="card dashboard-card mb-3">
-            <div class="card-body p-4">
+            <div class="card-body p-5">
                <h5 class="card-title">Currently Watching</h5>
                <p class="display-4 fw-bold mb-2">{{ watching_count }}</p>
-               <p class="card-text"><small class="text-light">Shows you are still tracking</small></p>
+               <p class="card-text"><small class="dashboard-muted">Shows you are still tracking</small></p>
                <a href="/library" class="btn btn-outline-light">View Library</a>
             </div>
          </div>
       </div>
       <div class="col-md-4">
          <div class="card dashboard-card mb-3">
-            <div class="card-body p-4">
+            <div class="card-body p-5">
                <h5 class="card-title">Finished Shows</h5>
                <p class="display-4 fw-bold mb-2">{{ finished_count }}</p>
-               <p class="card-text"><small class="text-light">These are your finished shows</small></p>
+               <p class="card-text"><small class="dashboard-muted">These are your finished shows</small></p>
                <a href="/library" class="btn btn-outline-light">View Library</a>
             </div>
          </div>
       </div>
       <div class="col-md-4">
          <div class="card dashboard-card mb-3">
-            <div class="card-body p-4">
+            <div class="card-body p-5">
                <h5 class="card-title">Shows with Updates</h5>
                <p class="display-4 fw-bold mb-2">{{ updates_count }}</p>
-               <p class="card-text"><small class="text-light">You have shows with updates</small></p>
+               <p class="card-text"><small class="dashboard-muted">You have shows with updates</small></p>
                <a href="/updates" class="btn btn-outline-light">Check Updates</a>
             </div>
          </div>
@@ -55,7 +55,7 @@
       <div class="card-body">
          <h5 class="card-title">Next Up</h5>
          <p class="card-text">Check your updates to see which shows have new aired episodes.</p>
-         <a href="/updates" class="btn btn-dark">Check Updates</a>
+         <a href="/updates" class="btn btn-outline-light">Check Updates</a>
       </div>
    </div>
 </div>
