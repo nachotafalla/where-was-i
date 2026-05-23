@@ -1,23 +1,88 @@
 {% extends "layout.html" %}
 
-{% block title %} Page {% endblock %}
-{% block body %}
-<h1> {{show.name}} </h1>
+{% block title %} {{ show.name }} {% endblock %}
 
-{% if saved %}
-    <p>Already in Library</p>
-{% else %}
-<form action="/save" method="post">
-    <input name="id" type="hidden" value="{{show.id}}">
-    <input name="name" type="hidden" value="{{show.name}}">
-    {% if show.image %}
-    <input name="image" type="hidden" value="{{ show.image.medium }}">
-    {% else %}
-    <input name="image" type="hidden" value="">
-    {% endif %}
-    <input name="status" type="hidden" value="{{show.status}}">
-    <input name="premiered" type="hidden" value="{{show.premiered}}">
-    <button type="submit">Add to Library</button>
-</form>
-{% endif %}
+{% block body %}
+<div class="dashboard-container">
+    <div class="dashboard-panel p-4">
+        <div class="row g-4">
+            <div class="col-md-4">
+                {% if show.image %}
+                    <img src="{{ show.image.medium }}" class="img-fluid rounded" alt="{{ show.name }}">
+                {% else %}
+                    <div class="search-poster search-poster-placeholder d-flex align-items-center justify-content-center rounded">
+                        No image available
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="col-md-8">
+                <h1 class="display-5 fw-bold">{{ show.name }}</h1>
+
+                <p class="dashboard-muted mb-2">
+                    {% if show.status %}
+                        Status: {{ show.status }}
+                    {% else %}
+                        Status: Unknown
+                    {% endif %}
+                </p>
+
+                <p class="dashboard-muted mb-2">
+                    {% if show.premiered %}
+                        Premiered: {{ show.premiered }}
+                    {% else %}
+                        Premiered: Unknown
+                    {% endif %}
+                </p>
+
+                <p class="dashboard-muted mb-2">
+                    {% if show.rating.average %}
+                        Rating: {{ show.rating.average }}
+                    {% else %}
+                        Rating: No rating yet
+                    {% endif %}
+                </p>
+
+                {% if show.genres %}
+                    <p class="dashboard-muted mb-4">
+                        Genres: {{ show.genres | join(", ") }}
+                    </p>
+                {% else %}
+                    <p class="dashboard-muted mb-4">Genres: Unknown</p>
+                {% endif %}
+
+                <h3>Summary</h3>
+                {% if show.summary %}
+                    <div class="dashboard-muted">
+                        {{ show.summary | safe }}
+                    </div>
+                {% else %}
+                    <p class="dashboard-muted">No summary available.</p>
+                {% endif %}
+
+                <div class="mt-4">
+                    {% if saved %}
+                        <p class="dashboard-muted">This show is already in your library.</p>
+                        <a href="/library" class="btn btn-outline-light">Go to Library</a>
+                    {% else %}
+                        <form action="/save" method="post">
+                            <input name="id" type="hidden" value="{{ show.id }}">
+                            <input name="name" type="hidden" value="{{ show.name }}">
+
+                            {% if show.image %}
+                                <input name="image" type="hidden" value="{{ show.image.medium }}">
+                            {% else %}
+                                <input name="image" type="hidden" value="">
+                            {% endif %}
+
+                            <input name="status" type="hidden" value="{{ show.status }}">
+                            <input name="premiered" type="hidden" value="{{ show.premiered }}">
+                            <button type="submit" class="btn btn-outline-light">Add to Library</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

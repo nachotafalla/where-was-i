@@ -114,3 +114,27 @@ def new_episodes(tvmaze_id, season, episode):
         elif ep["season"] == season and ep["number"] > episode:
             new.append(ep)
     return new
+
+def search_rank(result, query):
+    name = result["show"]["name"].lower()
+    q = query.lower()
+
+    rating = result["show"]["rating"]["average"]
+    if not rating:
+        rating = 0
+
+    rank = 0
+
+    if name == q:
+        rank += 100
+
+    if name.startswith(q):
+        rank += 25
+
+    if q in name:
+        rank += 40
+
+    rank += rating * 10
+    rank += result["score"]
+
+    return rank

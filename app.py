@@ -28,21 +28,28 @@ def index():
             new_episode_list = helpers.new_episodes(row[1], row[6], row[7])
 
             if new_episode_list:
-                updates_count = updates_count + 1 
+                updates_count = updates_count + 1
 
-    return render_template("index.html",watching_count=watching_count,finished_count=finished_count, updates_count=updates_count)
+    return render_template("index.html",
+                           watching_count=watching_count,
+                           finished_count=finished_count,
+                           updates_count=updates_count)
+
 
 @app.route("/search", methods=["GET"])
 def search():
     if not request.args.get("query"):
-        return render_template("search.html",results = [])
-    query = request.args.get("query")
-    response = requests.get("https://api.tvmaze.com/search/shows?", params={"q": query})
-    if response.status_code != 200:
         return render_template("search.html", results=[], query="")
+    query = request.args.get("query")
+    response = requests.get("https://api.tvmaze.com/search/shows?",
+                            params={"q": query})
+    if response.status_code != 200:
+        return render_template("search.html", results=[], query=query)
     data = response.json()
+    data = sorted(data, key=lambda result: helpers.search_rank(result, query), reverse=True)
     return render_template("search.html", results=data, query=query)
-    
+
+
 @app.route("/details", methods=["GET"])
 def details():
     conn, cur = helpers.get_db()
@@ -54,12 +61,14 @@ def details():
         return redirect(url_for("search"))
     data = response.json()
     #######################
-    rows = cur.execute("SELECT * FROM library WHERE tvmaze_id = ?", (show_id,)).fetchall()
-    conn.close()
+    rows = cur.execute("SELECT * FROM library WHERE tvmaze_id = ?",
+                       (show_id, )).fetchall()
+    helpers.close_db(conn)
     ######################
     saved = bool(rows)
     #######################
-    return render_template("details.html",show = data,saved = saved)
+    return render_template("details.html", show=data, saved=saved)
+
 
 @app.route("/library", methods=["GET"])
 def library():
@@ -87,10 +96,14 @@ def library():
             "max_episode": max_episode
         }
         for season in range(1, max_season + 1):
-            episodes_by_season[season] = helpers.max_episode(tvmaze_id,season)
+            episodes_by_season[season] = helpers.max_episode(tvmaze_id, season)
         max_data[tvmaze_id]["episodes_by_season"] = episodes_by_season
     #############
-    return render_template("library.html",watching_rows = watching_rows, finished_rows = finished_rows, max_data = max_data)
+    return render_template("library.html",
+                           watching_rows=watching_rows,
+                           finished_rows=finished_rows,
+                           max_data=max_data)
+
 
 @app.route("/progress", methods=["POST"])
 def progress():
@@ -107,24 +120,36 @@ def progress():
     else:
         season = int(season)
         episode = int(episode)
-    
+
     #########
     if action == "increase":
-        tvmaze_id,season,episode = helpers.next_ep(tvmaze_id,season,episode)
-        cur.execute("UPDATE library SET episode = ?, season = ?, finished = ? WHERE tvmaze_id = ?",(episode,season,0,tvmaze_id))
+        tvmaze_id, season, episode = helpers.next_ep(tvmaze_id, season,
+                                                     episode)
+        cur.execute(
+            "UPDATE library SET episode = ?, season = ?, finished = ? WHERE tvmaze_id = ?",
+            (episode, season, 0, tvmaze_id))
     elif action == "decrease":
-        tvmaze_id,season,episode = helpers.prev_ep(tvmaze_id,season,episode)
-        cur.execute("UPDATE library SET episode = ?, season = ?, finished = ? WHERE tvmaze_id = ?",(episode,season,0,tvmaze_id))
+        tvmaze_id, season, episode = helpers.prev_ep(tvmaze_id, season,
+                                                     episode)
+        cur.execute(
+            "UPDATE library SET episode = ?, season = ?, finished = ? WHERE tvmaze_id = ?",
+            (episode, season, 0, tvmaze_id))
     elif action == "set":
-        cur.execute("UPDATE library SET episode=?, season=?, finished = ? WHERE tvmaze_id=?",(episode,season,0,tvmaze_id))
+        cur.execute(
+            "UPDATE library SET episode=?, season=?, finished = ? WHERE tvmaze_id=?",
+            (episode, season, 0, tvmaze_id))
     elif action == "finished":
         max_season = helpers.max_season(tvmaze_id)
-        max_episode = helpers.max_episode(tvmaze_id,max_season)
-        cur.execute("UPDATE library SET episode = ?, season = ?, finished = ? WHERE tvmaze_id = ?", (max_episode, max_season, 1, tvmaze_id))
+        max_episode = helpers.max_episode(tvmaze_id, max_season)
+        cur.execute(
+            "UPDATE library SET episode = ?, season = ?, finished = ? WHERE tvmaze_id = ?",
+            (max_episode, max_season, 1, tvmaze_id))
     elif action == "unfinished":
-        cur.execute("UPDATE library SET finished = ? WHERE tvmaze_id = ?", (0,tvmaze_id))
+        cur.execute("UPDATE library SET finished = ? WHERE tvmaze_id = ?",
+                    (0, tvmaze_id))
     helpers.close_db(conn)
     return redirect(url_for("library"))
+
 
 @app.route("/save", methods=["POST"])
 def save():
@@ -137,11 +162,14 @@ def save():
         image = ""
     status = request.form.get("status")
     premiered = request.form.get("premiered")
-    cur.execute("INSERT OR IGNORE INTO library (tvmaze_id,name,image_url,status,premiered,season,episode,finished) VALUES (?,?,?,?,?,0,0,0)",(tvmaze,name,image,status,premiered))
+    cur.execute(
+        "INSERT OR IGNORE INTO library (tvmaze_id,name,image_url,status,premiered,season,episode,finished) VALUES (?,?,?,?,?,0,0,0)",
+        (tvmaze, name, image, status, premiered))
     helpers.close_db(conn)
-    return redirect(url_for("details",id=tvmaze))
+    return redirect(url_for("details", id=tvmaze))
 
-@app.route("/remove",methods=["POST"])
+
+@app.route("/remove", methods=["POST"])
 def remove():
     conn, cur = helpers.get_db()
     remove = request.form.get("remove")
@@ -149,7 +177,8 @@ def remove():
     helpers.close_db(conn)
     return redirect(url_for("library"))
 
-@app.route("/updates",methods=["GET"])
+
+@app.route("/updates", methods=["GET"])
 def updates():
     conn, cur = helpers.get_db()
     rows = cur.execute("SELECT * FROM library").fetchall()
@@ -161,13 +190,9 @@ def updates():
             continue
         new_episode_list = helpers.new_episodes(row[1], row[6], row[7])
         if new_episode_list:
-            updates.append({
-                "show": row,
-                "episodes": new_episode_list
-            })
-    return render_template("updates.html", updates = updates)
+            updates.append({"show": row, "episodes": new_episode_list})
+    return render_template("updates.html", updates=updates)
 
-    
 
 if __name__ == "__main__":
     app.run(debug=True)
