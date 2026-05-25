@@ -34,7 +34,7 @@ The way the progress is tracked is by saving the user's data in the local databa
 Shows marked as finished are moved into a separate section of the library. Finished shows are still checked for new aired episodes, so if a new season or episode is released later, the show can appear again on the Updates page.
 
 ### Updates
-The Updates page compares each saved show’s current progress with the aired episode list from TVMaze. If an episode has already aired and comes after the user’s saved season and episode, it is shown as a new update. Future episodes are ignored so the page only displays episodes the user can actually watch. If a finished show receives new episodes, it can still appear in Updates, and the user can move it back to Watching.
+The Updates page compares each finished show’s saved progress with the aired episode list from TVMaze. If an episode has already aired and comes after the user’s saved season and episode, it is shown as a new update. Future episodes are ignored so the page only displays episodes the user can actually watch. If a finished show receives new episodes, it can still appear in Updates, and the user can move it back to Watching.
 
 ### Responsive Navigation and Styling
 I used Bootstrap 5 for layout and responsive navigation and elements. The nav bar links to all pages (dashboard, search, library, and updates), and used CSS for darker styles and small design choices.
@@ -46,7 +46,7 @@ When a user searches for a show, the app sends the search query to TVMaze and re
 
 When a user saves a show, the app stores basic information in the library table, including its TVMaze ID, name, poster image, status, premiere date, current season, current episode, and whether the show is marked as finished. All of this is saved locally to keep as few requests to TVMaze as possible.
 
-For the update-checking logic, the app fetches the show's episode list from TVMaze (ignoring episodes that haven't come out yet) and compares the new ones against the user's saved progress. If an aired episode comes after the user's saved progress then it's treated as a new update and displayed on the dashboard and updates page.
+For the update-checking logic, the app fetches each finished show's episode list from TVMaze (ignoring episodes that haven't come out yet) and compares the new ones against the user's saved progress. If an aired episode comes after the user's saved progress then it's treated as a new update and displayed on the dashboard and updates page.
 
 ## Files and Project Structure
 The main file is `app.py`, containing the Flask app, routes, and main logic that connects everything together. The routes `/`, `/search`, `/details`, `/library`, `/progress`, `/save`, `/remove`, and `/updates` are defined there.
@@ -93,3 +93,6 @@ To run the project locally:
 5. Open the local server URL shown in the terminal.
 
 The app uses SQLite, so the local database is created automatically when the application starts.
+
+## Acknowledgements
+I used ChatGPT as a learning assistant in this project many times when the code wouldnt work or I had an idea but didnt know how to execute it. However, my main objective was to be able to make an app that was simple enough for me to understand and write every single line of code, so that is what I did.

@@ -1,3 +1,6 @@
+# Some planning, debugging, and code-structure guidance for this project was developed with help from ChatGPT. However I can guarantee every single line and function has been written manually by me, understanding everything my project does.
+
+
 from flask import Flask, render_template, request, redirect, url_for
 import requests
 import sqlite3
@@ -28,10 +31,7 @@ def index():
         else:
             watching_count = watching_count + 1
 
-    return render_template("index.html",
-                           watching_count=watching_count,
-                           finished_count=finished_count,
-                           updates_count=updates_count)
+    return render_template("index.html", watching_count=watching_count, finished_count=finished_count, updates_count=updates_count)
 
 
 @app.route("/search", methods=["GET"])
@@ -97,10 +97,7 @@ def library():
             episodes_by_season[season] = helpers.max_episode(tvmaze_id, season)
         max_data[tvmaze_id]["episodes_by_season"] = episodes_by_season
     #############
-    return render_template("library.html",
-                           watching_rows=watching_rows,
-                           finished_rows=finished_rows,
-                           max_data=max_data)
+    return render_template("library.html", watching_rows=watching_rows, finished_rows=finished_rows, max_data=max_data)
 
 
 @app.route("/progress", methods=["POST"])
