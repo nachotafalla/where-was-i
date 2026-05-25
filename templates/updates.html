@@ -1,34 +1,41 @@
 {% extends "layout.html" %}
-
 {% block body %}
 <div class="dashboard-container">
-    <h1 class="display-5 fw-bold">Updates</h1>
-    <p class="lead dashboard-muted">New aired episodes since your saved progress.</p>
-
-    {% if updates %}
-        {% for update in updates %}
-            <div class="dashboard-panel p-4 mt-4">
-                <h3>{{ update["show"][2] }}</h3>
-                <p class="dashboard-muted">
-                    {{ update["episodes"]|length }} new episodes
-                </p>
-                {% for episode in update["episodes"] %}
-                    <div class="episode-row pt-3 mt-3">
-                        <strong>
-                            Season {{ episode["season"] }}, Episode {{ episode["number"] }}
-                        </strong>
-                        <p class="mb-1">{{ episode["name"] }}</p>
-                        <small class="dashboard-muted">Aired {{ episode["airdate"] }}</small>
-                    </div>
-                {% endfor %}
-            </div>
-        {% endfor %}
-    {% else %}
-        <div class="dashboard-panel p-4 mt-4">
-            <h3>No new episodes found.</h3>
-            <p class="dashboard-muted mb-0">Your watching list is caught up for now.</p>
-            <a href="/library" class="btn btn-outline-light mt-3">Back to Library</a>
-        </div>
-    {% endif %}
+   <h1 class="display-5 fw-bold">Updates</h1>
+   <p class="lead dashboard-muted">New aired episodes since your saved progress.</p>
+   {% if updates %}
+   {% for update in updates %}
+   <div class="dashboard-panel p-4 mt-4">
+      <h3>{{ update["show"][2] }}</h3>
+      <p class="dashboard-muted">
+         {{ update["episodes"]|length }} new episodes
+      </p>
+      {% if update["show"][8] == 1 %}
+      <form action="/progress" method="post">
+         <input name="id" type="hidden" value="{{ update['show'][1] }}">
+         <input name="action" type="hidden" value="unfinished">
+         <button type="submit" class="btn btn-outline-warning btn-sm">
+         Move to Watching
+         </button>
+      </form>
+      {% endif %}
+      {% for episode in update["episodes"] %}
+      <div class="episode-row pt-3 mt-3">
+         <strong>
+         Season {{ episode["season"] }}, Episode {{ episode["number"] }}
+         </strong>
+         <p class="mb-1">{{ episode["name"] }}</p>
+         <small class="dashboard-muted">Aired {{ episode["airdate"] }}</small>
+      </div>
+      {% endfor %}
+   </div>
+   {% endfor %}
+   {% else %}
+   <div class="dashboard-panel p-4 mt-4">
+      <h3>No new episodes found.</h3>
+      <p class="dashboard-muted mb-0">Your watching list is caught up for now.</p>
+      <a href="/library" class="btn btn-outline-light mt-3">Back to Library</a>
+   </div>
+   {% endif %}
 </div>
 {% endblock %}

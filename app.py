@@ -25,10 +25,10 @@ def index():
         else:
             watching_count = watching_count + 1
 
-            new_episode_list = helpers.new_episodes(row[1], row[6], row[7])
+        new_episode_list = helpers.new_episodes(row[1], row[6], row[7])
 
-            if new_episode_list:
-                updates_count = updates_count + 1
+        if new_episode_list:
+            updates_count = updates_count + 1
 
     return render_template("index.html",
                            watching_count=watching_count,
@@ -114,39 +114,41 @@ def progress():
     season = request.form.get("season")
     episode = request.form.get("episode")
     #########
-    if not season or not episode:
-        season = 0
-        episode = 0
-    else:
-        season = int(season)
-        episode = int(episode)
-
     #########
-    if action == "increase":
-        tvmaze_id, season, episode = helpers.next_ep(tvmaze_id, season,
-                                                     episode)
-        cur.execute(
-            "UPDATE library SET episode = ?, season = ?, finished = ? WHERE tvmaze_id = ?",
-            (episode, season, 0, tvmaze_id))
-    elif action == "decrease":
-        tvmaze_id, season, episode = helpers.prev_ep(tvmaze_id, season,
-                                                     episode)
-        cur.execute(
-            "UPDATE library SET episode = ?, season = ?, finished = ? WHERE tvmaze_id = ?",
-            (episode, season, 0, tvmaze_id))
-    elif action == "set":
-        cur.execute(
-            "UPDATE library SET episode=?, season=?, finished = ? WHERE tvmaze_id=?",
-            (episode, season, 0, tvmaze_id))
-    elif action == "finished":
+    if action == "finished":
         max_season = helpers.max_season(tvmaze_id)
         max_episode = helpers.max_episode(tvmaze_id, max_season)
-        cur.execute(
-            "UPDATE library SET episode = ?, season = ?, finished = ? WHERE tvmaze_id = ?",
-            (max_episode, max_season, 1, tvmaze_id))
+        if max_season > 0 and max_episode > 0:
+            cur.execute(
+                "UPDATE library SET episode = ?, season = ?, finished = ? WHERE tvmaze_id = ?",
+                (max_episode, max_season, 1, tvmaze_id))
     elif action == "unfinished":
         cur.execute("UPDATE library SET finished = ? WHERE tvmaze_id = ?",
                     (0, tvmaze_id))
+    else:
+        try:
+            season = int(season)
+            episode = int(episode)
+        except (TypeError, ValueError):
+            helpers.close_db(conn)
+            return redirect(url_for("library"))
+
+        if action == "increase":
+            tvmaze_id, season, episode = helpers.next_ep(tvmaze_id, season,
+                                                         episode)
+            cur.execute(
+                "UPDATE library SET episode = ?, season = ?, finished = ? WHERE tvmaze_id = ?",
+                (episode, season, 0, tvmaze_id))
+        elif action == "decrease":
+            tvmaze_id, season, episode = helpers.prev_ep(tvmaze_id, season,
+                                                         episode)
+            cur.execute(
+                "UPDATE library SET episode = ?, season = ?, finished = ? WHERE tvmaze_id = ?",
+                (episode, season, 0, tvmaze_id))
+        elif action == "set":
+            cur.execute(
+                "UPDATE library SET episode=?, season=?, finished = ? WHERE tvmaze_id=?",
+                (episode, season, 0, tvmaze_id))
     helpers.close_db(conn)
     return redirect(url_for("library"))
 
@@ -186,8 +188,6 @@ def updates():
     updates = []
     ##########
     for row in rows:
-        if row[8] == 1:
-            continue
         new_episode_list = helpers.new_episodes(row[1], row[6], row[7])
         if new_episode_list:
             updates.append({"show": row, "episodes": new_episode_list})
