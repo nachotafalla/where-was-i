@@ -1,6 +1,5 @@
 # Some planning, debugging, and code-structure guidance for this project was developed with help from ChatGPT. However I can guarantee every single line and function has been written manually by me, understanding everything my project does.
 
-
 from flask import Flask, render_template, request, redirect, url_for
 import requests
 import sqlite3

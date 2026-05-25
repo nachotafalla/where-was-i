@@ -1,7 +1,7 @@
 # Where Was I
 My CS50 final project
 
-#### Video Demo: 
+#### Video Demo: https://youtu.be/JspMFoGgKFk
 
 #### Description:
 Where Was I? is a Flask web application that helps users track television shows they are watching and identify new episodes that have aired since their last watched episode.
