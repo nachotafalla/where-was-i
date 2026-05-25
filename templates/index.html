@@ -8,7 +8,7 @@
    </div>
    <div class="row mt-4 g-4">
       <div class="col-md-4">
-         <div class="card dashboard-card mb-3">
+         <div class="card dashboard-card h-100">
             <div class="card-body p-5">
                <h5 class="card-title">Currently Watching</h5>
                <p class="display-4 fw-bold mb-2">{{ watching_count }}</p>
@@ -18,7 +18,7 @@
          </div>
       </div>
       <div class="col-md-4">
-         <div class="card dashboard-card mb-3">
+         <div class="card dashboard-card h-100">
             <div class="card-body p-5">
                <h5 class="card-title">Finished Shows</h5>
                <p class="display-4 fw-bold mb-2">{{ finished_count }}</p>
@@ -28,11 +28,11 @@
          </div>
       </div>
       <div class="col-md-4">
-         <div class="card dashboard-card mb-3">
+         <div class="card dashboard-card h-100">
             <div class="card-body p-5">
                <h5 class="card-title">Shows with Updates</h5>
                <p class="display-4 fw-bold mb-2">{{ updates_count }}</p>
-               <p class="card-text"><small class="dashboard-muted">You have shows with updates</small></p>
+               <p class="card-text"><small class="dashboard-muted">New episodes for finished shows</small></p>
                <a href="/updates" class="btn btn-outline-light">Check Updates</a>
             </div>
          </div>
@@ -42,7 +42,7 @@
       <h5>Library Status</h5>
       <p class="mb-0">
          You are currently tracking {{ watching_count }} shows and have finished {{ finished_count }}.
-         {{ updates_count }} shows have new episodes available.
+         {{ updates_count }} finished shows have new episodes available.
       </p>
    </div>
    <h2 class="mt-5 mb-3">Quick Actions</h2>
@@ -54,7 +54,7 @@
    <div class="card dashboard-panel mt-4">
       <div class="card-body">
          <h5 class="card-title">Next Up</h5>
-         <p class="card-text">Check your updates to see which shows have new aired episodes.</p>
+         <p class="card-text">Check your updates to see which finished shows have newly aired episodes.</p>
          <a href="/updates" class="btn btn-outline-light">Check Updates</a>
       </div>
    </div>

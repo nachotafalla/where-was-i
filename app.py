@@ -22,13 +22,11 @@ def index():
     for row in rows:
         if row[8] == 1:
             finished_count = finished_count + 1
+            new_episode_list = helpers.new_episodes(row[1], row[6], row[7])
+            if new_episode_list:
+                updates_count = updates_count + 1
         else:
             watching_count = watching_count + 1
-
-        new_episode_list = helpers.new_episodes(row[1], row[6], row[7])
-
-        if new_episode_list:
-            updates_count = updates_count + 1
 
     return render_template("index.html",
                            watching_count=watching_count,
@@ -188,6 +186,8 @@ def updates():
     updates = []
     ##########
     for row in rows:
+        if row[8] != 1:
+            continue
         new_episode_list = helpers.new_episodes(row[1], row[6], row[7])
         if new_episode_list:
             updates.append({"show": row, "episodes": new_episode_list})
